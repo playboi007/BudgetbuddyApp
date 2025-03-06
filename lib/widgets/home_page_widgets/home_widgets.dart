@@ -92,7 +92,7 @@ class BalanceAndCategories extends StatelessWidget {
                         ),
                       ),
                     ),
-                    ],
+                  ],
                 ),
               ],
             ),
@@ -134,14 +134,16 @@ class UserAppbar extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
                     'Welcome, $name',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

@@ -73,149 +73,147 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
 
   @override
   Widget build(BuildContext context) {
-    final String title = widget.featuredGoal != null 
-        ? 'Create Goal from Template' 
+    final String title = widget.featuredGoal != null
+        ? 'Create Goal from Template'
         : 'Create New ${widget.categoryType} Goal';
-        
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Name'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return TextStrings.savingsGoalNew;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          if (widget.categoryType == "Savings") ...[
-            TextFormField(
-              controller: _startAmountController,
-              decoration: InputDecoration(labelText: 'Start Amount'),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return TextStrings.savingsAmount;
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _goalAmountController,
-              decoration: const InputDecoration(labelText: 'Goal Amount'),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return TextStrings.savingsGoalAmount;
-                }
-                return null;
-              },
-            ),
-            CheckboxListTile(
-              title: Text('Lock till target amount'),
-              value: _isLocked,
-              onChanged: (value) {
-                setState(() {
-                  _isLocked = value!;
-                });
-              },
-            ),
-            const SizedBox(height: 10),
-            ListTile(
-              title: const Text('Set Reminder Date'),
-              subtitle: Text(_reminderDate == null
-                  ? 'No reminder set'
-                  : 'Reminder on: ${_reminderDate!.day}/${_reminderDate!.month}/${_reminderDate!.year}'),
-              trailing: const Icon(Icons.calendar_today),
-              onTap: _selectReminderDate,
-            ),
-            const SizedBox(height: 10),
-            DropdownButtonFormField<ReminderFrequency>(
-              decoration: const InputDecoration(
-                labelText: 'Reminder Frequency',
-                border: OutlineInputBorder(),
-              ),
-              value: _reminderFrequency,
-              items: ReminderFrequency.values.map((frequency) {
-                String displayName = '';
-                switch (frequency) {
-                  case ReminderFrequency.weekly:
-                    displayName = 'Weekly';
-                    break;
-                  case ReminderFrequency.biWeekly:
-                    displayName = 'Bi-Weekly';
-                    break;
-                  case ReminderFrequency.monthly:
-                    displayName = 'Monthly';
-                    break;
-                  case ReminderFrequency.none:
-                    displayName = 'No Recurring Reminder';
-                    break;
-                }
-                return DropdownMenuItem<ReminderFrequency>(
-                  value: frequency,
-                  child: Text(displayName),
-                );
-              }).toList(),
-              onChanged: (ReminderFrequency? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _reminderFrequency = newValue;
-                  });
-                }
-              },
-            ),
-          ],
-          const SizedBox(height: 20),
-          if (widget.categoryType == "Free") ...[
-            TextFormField(
-              controller: _startAmountController,
-              decoration: const InputDecoration(labelText: 'Amount'),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return TextStrings.savingsAmount;
-                }
-                return null;
-              },
-            ),
-          ],
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                final newCategory = BudgetCategory(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  name: _nameController.text,
-                  amount: double.parse(_startAmountController.text),
-                  categoryType: widget.categoryType,
-                  goalAmount: widget.categoryType == 'Savings'
-                      ? double.parse(_goalAmountController.text)
-                      : null,
-                  isLocked: _isLocked,
-                  createdAt: DateTime.now(),
-                  reminderDate: _reminderDate,
-                  reminderFrequency: _reminderFrequency,
-                );
-                widget.onSave(newCategory);
-              }
-            },
-            child: Text('Create'),
-          ),
-        ],
-      ),
-    ),
-    )
-    );
-  }
-  }
 
+    return Scaffold(
+        appBar: AppBar(title: Text(title)),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return TextStrings.savingsGoalNew;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                if (widget.categoryType == "Savings") ...[
+                  TextFormField(
+                    controller: _startAmountController,
+                    decoration: InputDecoration(labelText: 'Start Amount'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return TextStrings.savingsAmount;
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: _goalAmountController,
+                    decoration: const InputDecoration(labelText: 'Goal Amount'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return TextStrings.savingsGoalAmount;
+                      }
+                      return null;
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: Text('Lock till target amount'),
+                    value: _isLocked,
+                    onChanged: (value) {
+                      setState(() {
+                        _isLocked = value!;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ListTile(
+                    title: const Text('Set Reminder Date'),
+                    subtitle: Text(_reminderDate == null
+                        ? 'No reminder set'
+                        : 'Reminder on: ${_reminderDate!.day}/${_reminderDate!.month}/${_reminderDate!.year}'),
+                    trailing: const Icon(Icons.calendar_today),
+                    onTap: _selectReminderDate,
+                  ),
+                  const SizedBox(height: 10),
+                  DropdownButtonFormField<ReminderFrequency>(
+                    decoration: const InputDecoration(
+                      labelText: 'Reminder Frequency',
+                      border: OutlineInputBorder(),
+                    ),
+                    value: _reminderFrequency,
+                    items: ReminderFrequency.values.map((frequency) {
+                      String displayName = '';
+                      switch (frequency) {
+                        case ReminderFrequency.weekly:
+                          displayName = 'Weekly';
+                          break;
+                        case ReminderFrequency.biWeekly:
+                          displayName = 'Bi-Weekly';
+                          break;
+                        case ReminderFrequency.monthly:
+                          displayName = 'Monthly';
+                          break;
+                        case ReminderFrequency.none:
+                          displayName = 'No Recurring Reminder';
+                          break;
+                      }
+                      return DropdownMenuItem<ReminderFrequency>(
+                        value: frequency,
+                        child: Text(displayName),
+                      );
+                    }).toList(),
+                    onChanged: (ReminderFrequency? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _reminderFrequency = newValue;
+                        });
+                      }
+                    },
+                  ),
+                ],
+                const SizedBox(height: 20),
+                if (widget.categoryType == "Free") ...[
+                  TextFormField(
+                    controller: _startAmountController,
+                    decoration: const InputDecoration(labelText: 'Amount'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return TextStrings.savingsAmount;
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      final newCategory = BudgetCategory(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        name: _nameController.text,
+                        amount: double.parse(_startAmountController.text),
+                        categoryType: widget.categoryType,
+                        goalAmount: widget.categoryType == 'Savings'
+                            ? double.parse(_goalAmountController.text)
+                            : null,
+                        isLocked: _isLocked,
+                        createdAt: DateTime.now(),
+                        reminderDate: _reminderDate,
+                        reminderFrequency: _reminderFrequency,
+                      );
+                      widget.onSave(newCategory);
+                    }
+                  },
+                  child: Text('Create'),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+}
