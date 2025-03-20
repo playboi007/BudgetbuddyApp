@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               const SizedBox(height: 20),
               //balance and categories widget
-              BalanceAndCategories(amount: 525000, count: 0),
+              BalanceAndCategories(),
 
               const SizedBox(height: 20),
               Row(
