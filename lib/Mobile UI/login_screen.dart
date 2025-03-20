@@ -1,9 +1,13 @@
 import 'package:budgetbuddy_app/utils/constants/image_strings.dart';
+import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
+import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:budgetbuddy_app/utils/theme/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:budgetbuddy_app/Mobile UI/signup_screen.dart';
 import 'package:budgetbuddy_app/utils/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthenticationFlow extends StatelessWidget {
   const AuthenticationFlow({super.key});
@@ -64,6 +68,53 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
+  Future<void> _forgotPassword() async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password reset email sent. Please check your inbox.'),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? 'Failed to send password reset email'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _googleSignin() async {
+    try {
+      // Create a GoogleSignIn instance
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Get authentication details from request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      // Create credentials for Firebase
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Sign in with Firebase using Google credentials
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Google sign in failed: ${e.toString()}')),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'BUDGETBUDDY',
+                TextStrings.appName,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -144,10 +195,10 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your email';
+                return TextStrings.inputEmail;
               }
               if (!Validators.isValidEmail(value)) {
-                return 'Please enter a valid email';
+                return TextStrings.validEmail;
               }
               return null;
             },
@@ -194,10 +245,10 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your phone number';
+                return TextStrings.inputNum;
               }
               if (!Validators.isValidPhone(value)) {
-                return 'Phone number must be 9 digits';
+                return TextStrings.numCount;
               }
               return null;
             },
@@ -250,10 +301,18 @@ class _LoginScreenState extends State<LoginScreen>
               ],
             ),
             TextButton(
-              onPressed: () {
-                // TODO: Implement forgot password
+              onPressed: () async {
+                if (_emailController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter your email address'),
+                    ),
+                  );
+                  return;
+                }
+                _forgotPassword();
               },
-              child: const Text('Forgot Password?'),
+              child: Text(TextStrings.forPass),
             ),
           ],
         ),
@@ -264,15 +323,15 @@ class _LoginScreenState extends State<LoginScreen>
             minimumSize: const Size(double.infinity, 50),
             backgroundColor: Colors.blue,
           ),
-          child: const Text('Login', style: TextStyle(color: Colors.white)),
+          child: Text('Login', style: TtextTheme.darktText.bodyMedium),
         ),
         const SizedBox(height: 16),
         const Text('or sign in with'),
         const SizedBox(height: 16),
         OutlinedButton.icon(
-          onPressed: () {
-            // TODO: Implement Google sign in
-          },
+          onPressed: () async {
+            _googleSignin();
+          }, //onpressed
           icon: Image.asset(CImageStrings.google, height: 24),
           label: const Text('Continue with Google'),
           style: OutlinedButton.styleFrom(
@@ -293,7 +352,7 @@ class _LoginScreenState extends State<LoginScreen>
               text: "Don't have an account? ",
               children: [
                 TextSpan(
-                  text: 'Create an account',
+                  text: TextStrings.crAcc,
                   style: TextStyle(color: Colors.blue),
                 ),
               ],

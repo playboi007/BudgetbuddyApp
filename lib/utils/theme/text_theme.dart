@@ -7,9 +7,9 @@ class TtextTheme {
     headlineLarge: const TextStyle().copyWith(
         fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.black),
     headlineMedium: const TextStyle().copyWith(
-        fontSize: 24.0, fontWeight: FontWeight.w500, color: Colors.black87),
+        fontSize: 24.0, fontWeight: FontWeight.w600, color: Colors.black87),
     titleLarge: const TextStyle().copyWith(
-        fontSize: 18.0, fontWeight: FontWeight.w600, color: Colors.black87),
+        fontSize: 20.0, fontWeight: FontWeight.w600, color: Colors.black87),
     titleMedium: const TextStyle().copyWith(
         fontSize: 18.0, fontWeight: FontWeight.w500, color: Colors.black87),
     titleSmall: const TextStyle().copyWith(
@@ -18,6 +18,10 @@ class TtextTheme {
         fontWeight: FontWeight.w500, fontSize: 16, color: Colors.black87),
     bodyMedium: const TextStyle().copyWith(
         fontWeight: FontWeight.normal, fontSize: 12, color: Colors.black87),
+
+    //other text
+    //lesson_page
+
   );
 
   static TextTheme darktText = TextTheme(

@@ -1,3 +1,4 @@
+import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:budgetbuddy_app/widgets/featured_goal_card.dart';
@@ -9,7 +10,7 @@ class FeaturedGoalsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Featured Goals')),
+      appBar: AppBar(title: const Text(TextStrings.featCat)),
       body: StreamBuilder<QuerySnapshot>(
         stream:
             FirebaseFirestore.instance.collection('featured_goals').snapshots(),

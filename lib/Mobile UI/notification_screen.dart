@@ -1,3 +1,4 @@
+import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:budgetbuddy_app/services/notification_provider.dart';
@@ -15,7 +16,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch notifications when screen loads
+    // hii inafetch notifications when screen loads
+    if (!mounted) return;
     Future.microtask(() =>
         Provider.of<NotificationProvider>(context, listen: false)
             .fetchNotifications());
@@ -25,7 +27,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const Text(TextStrings.notifs),
         actions: [
           IconButton(
             icon: const Icon(Icons.done_all),
@@ -71,12 +73,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   if (!notification.isRead) {
                     provider.markAsRead(notification.id);
                   }
-                  // Handle navigation to related item if needed
                   if (notification.relatedItemId != null &&
-                      notification.relatedItemType != null) {
-                    // Navigate to the related item
-                    // This can be expanded based on the app's navigation structure
-                  }
+                      notification.relatedItemType != null) {}
                 },
                 onDismiss: () {
                   provider.deleteNotification(notification.id);

@@ -1,3 +1,4 @@
+import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,10 +23,31 @@ class _ReportPageState extends State<ReportPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize the analytics provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AnalyticsProvider>(context, listen: false).initialize();
     });
+  }
+
+  // Show date range picker dialog
+  Future<void> _showDateRangePicker(BuildContext context) async {
+    final analyticsProvider =
+        Provider.of<AnalyticsProvider>(context, listen: false);
+    final initialDateRange = DateTimeRange(
+      start: analyticsProvider.startDate,
+      end: analyticsProvider.endDate,
+    );
+
+    final pickedDateRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      initialDateRange: initialDateRange,
+    );
+
+    if (pickedDateRange != null) {
+      analyticsProvider.setDateRange(
+          pickedDateRange.start, pickedDateRange.end);
+    }
   }
 
   @override
@@ -34,7 +56,7 @@ class _ReportPageState extends State<ReportPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Savings Reports'),
+        title: const Text(TextStrings.SaveRepo),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
@@ -180,7 +202,112 @@ class _ReportPageState extends State<ReportPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Date range indicator
+              // Weekly reports section
+              FutureBuilder<List<Map<String, dynamic>>>(
+                future: _reportsService.getWeeklyReports(limit: 3),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                          'Error loading weekly reports: ${snapshot.error}'),
+                    );
+                  }
+
+                  final weeklyReports = snapshot.data ?? [];
+
+                  if (weeklyReports.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Weekly Reports',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Navigate to a full weekly reports page if needed
+                                },
+                                child: const Text('View All'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          ...weeklyReports.map((report) {
+                            final startDate =
+                                (report['startDate'] as Timestamp).toDate();
+                            final endDate =
+                                (report['endDate'] as Timestamp).toDate();
+                            final net = report['net'] as double;
+                            final isPositive = net >= 0;
+
+                            return ListTile(
+                              title: Text(
+                                '${DateFormat('MMM d').format(startDate)} - ${DateFormat('MMM d').format(endDate)}',
+                              ),
+                              subtitle: Text(
+                                'Deposits: ${analyticsProvider.formatCurrency(report['deposits'])}\n'
+                                'Withdrawals: ${analyticsProvider.formatCurrency(report['withdrawals'])}',
+                              ),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    analyticsProvider.formatCurrency(net.abs()),
+                                    style: TextStyle(
+                                      color: isPositive
+                                          ? Colors.green
+                                          : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isPositive
+                                            ? Icons.arrow_upward
+                                            : Icons.arrow_downward,
+                                        color: isPositive
+                                            ? Colors.green
+                                            : Colors.red,
+                                        size: 12,
+                                      ),
+                                      Text(
+                                        isPositive ? 'Saved' : 'Spent',
+                                        style: TextStyle(
+                                          color: isPositive
+                                              ? Colors.green
+                                              : Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -316,39 +443,5 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  Future<void> _showDateRangePicker(BuildContext context) async {
-    final analyticsProvider =
-        Provider.of<AnalyticsProvider>(context, listen: false);
-
-    final initialDateRange = DateTimeRange(
-      start: analyticsProvider.startDate,
-      end: analyticsProvider.endDate,
-    );
-
-    final pickedDateRange = await showDateRangePicker(
-      context: context,
-      initialDateRange: initialDateRange,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (pickedDateRange != null) {
-      analyticsProvider.setDateRange(
-        pickedDateRange.start,
-        pickedDateRange.end,
-      );
-    }
-  }
+  // _showDateRangePicker method is already defined above
 }

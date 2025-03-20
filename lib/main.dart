@@ -2,6 +2,7 @@ import 'package:budgetbuddy_app/services/category_provider.dart';
 import 'package:budgetbuddy_app/services/notification_provider.dart';
 import 'package:budgetbuddy_app/states/analytics_provider.dart';
 import 'package:budgetbuddy_app/services/transaction_provider.dart';
+import 'package:budgetbuddy_app/services/course_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +30,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
+        ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => CourseProvider()),
       ],
       child: MaterialApp(
         title: 'Budget Buddy',
@@ -57,7 +60,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
-    }
+  }
 }
 
 class BudgetBuddyApp extends StatelessWidget {

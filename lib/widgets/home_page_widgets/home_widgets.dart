@@ -1,5 +1,6 @@
 import 'package:budgetbuddy_app/Mobile%20UI/new_category_form.dart';
 import 'package:budgetbuddy_app/Mobile%20UI/notification_screen.dart';
+import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:budgetbuddy_app/data models/budget_models.dart';
@@ -9,6 +10,7 @@ import 'package:budgetbuddy_app/services/transaction_provider.dart';
 import 'package:budgetbuddy_app/services/category_provider.dart';
 import 'package:budgetbuddy_app/services/notification_provider.dart';
 import 'package:budgetbuddy_app/Mobile UI/category_report_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BalanceAndCategories extends StatelessWidget {
   const BalanceAndCategories({super.key});
@@ -107,7 +109,10 @@ class BalanceAndCategories extends StatelessWidget {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.blue[600],
                 ),
-                child: const Text('allocate funds'),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                  child: const Text('allocate funds'),
+                ),
               ),
             ),
           ],
@@ -128,6 +133,9 @@ class UserAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //final currentUser = FirebaseAuth.instance.currentUser;
+    //final displayName = currentUser?.displayName ?? name;
+
     return Consumer<NotificationProvider>(
       builder: (context, notificationProvider, _) {
         return Container(
@@ -142,8 +150,7 @@ class UserAppbar extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Welcome, $name',
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TtextTheme.lightText.headlineMedium,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -408,7 +415,7 @@ class BuildCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSavings = category.categoryType == 'savings';
+    final isSavings = category.categoryType.toLowerCase() == 'savings';
     final progress =
         isSavings && category.goalAmount != null && category.goalAmount! > 0
             ? (category.amount / category.goalAmount!).clamp(0.0, 1.0)

@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:budgetbuddy_app/services/reports_service.dart';
 
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final ReportsService _reportsService = ReportsService();
 
   // Gets current user ID
   String? get currentUserId => _auth.currentUser?.uid;
@@ -26,6 +28,9 @@ class FirebaseService {
           'createdAt': FieldValue.serverTimestamp(),
           'totalSavings': 0.0,
         });
+
+        // Initialize analytics collections for the new user
+        await _reportsService.initializeCollections();
       }
     } catch (e) {
       throw Exception('Failed to create user document: $e');

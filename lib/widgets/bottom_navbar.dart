@@ -2,6 +2,8 @@ import 'package:budgetbuddy_app/Mobile%20UI/home_page.dart';
 import 'package:flutter/material.dart';
 import '../Mobile UI/categories_page.dart';
 import 'package:budgetbuddy_app/Mobile UI/reports_page.dart';
+import 'package:budgetbuddy_app/Mobile UI/financial_education_page.dart';
+import 'package:budgetbuddy_app/Mobile UI/settings_screen.dart';
 
 //bottom navigation bar
 class BottomNavigation extends StatefulWidget {
@@ -18,7 +20,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
     const HomePage(),
     const CategoriesPage(),
     const ReportPage(),
-    Scaffold(body: Center(child: Text('Settings'))), // Placeholder
+    const FinancialEducationPage(),
+    const SettingsScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -34,6 +37,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.category), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.analytics), label: ''),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.cast_for_education), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
         ],
         currentIndex: _selectedIndex,

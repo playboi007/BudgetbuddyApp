@@ -100,7 +100,8 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
                 if (widget.categoryType == "Savings") ...[
                   TextFormField(
                     controller: _startAmountController,
-                    decoration: InputDecoration(labelText: 'Start Amount'),
+                    decoration:
+                        InputDecoration(labelText: TextStrings.startAmount),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -111,7 +112,8 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
                   ),
                   TextFormField(
                     controller: _goalAmountController,
-                    decoration: const InputDecoration(labelText: 'Goal Amount'),
+                    decoration: const InputDecoration(
+                        labelText: TextStrings.goalAmount),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -121,7 +123,7 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
                     },
                   ),
                   CheckboxListTile(
-                    title: Text('Lock till target amount'),
+                    title: Text(TextStrings.lock),
                     value: _isLocked,
                     onChanged: (value) {
                       setState(() {
@@ -141,7 +143,7 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
                   const SizedBox(height: 10),
                   DropdownButtonFormField<ReminderFrequency>(
                     decoration: const InputDecoration(
-                      labelText: 'Reminder Frequency',
+                      labelText: TextStrings.freqReminder,
                       border: OutlineInputBorder(),
                     ),
                     value: _reminderFrequency,
@@ -179,7 +181,8 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
                 if (widget.categoryType == "Free") ...[
                   TextFormField(
                     controller: _startAmountController,
-                    decoration: const InputDecoration(labelText: 'Amount'),
+                    decoration: const InputDecoration(
+                        labelText: TextStrings.startAmount),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -209,7 +212,7 @@ class _NewCategoryFormState extends State<NewCategoryForm> {
                       widget.onSave(newCategory);
                     }
                   },
-                  child: Text('Create'),
+                  child: Text(TextStrings.createCat),
                 ),
               ],
             ),

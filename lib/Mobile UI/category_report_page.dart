@@ -1,3 +1,4 @@
+import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -160,7 +161,7 @@ class _CategoryReportPageState extends State<CategoryReportPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Goal Progress',
+              TextStrings.gp,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
@@ -184,7 +185,7 @@ class _CategoryReportPageState extends State<CategoryReportPage> {
                   )
                 else
                   const Text(
-                    'Goal reached!',
+                    TextStrings.gr,
                     style: TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
@@ -334,7 +335,7 @@ class _CategoryReportPageState extends State<CategoryReportPage> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

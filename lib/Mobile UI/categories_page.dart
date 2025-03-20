@@ -1,6 +1,6 @@
+import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-//import 'package:budgetbuddy_app/states/budget_states.dart';
 import 'package:budgetbuddy_app/data models/budget_models.dart';
 import 'package:provider/provider.dart';
 import 'package:budgetbuddy_app/services/category_provider.dart';
@@ -18,11 +18,8 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
-  //final FirebaseService _firebaseService = FirebaseService();
   bool _isLoading = true;
   String? _error;
-  //final List<BudgetCategory> _categories = [];
-
   void _showCategoryTypeDialog() {
     showDialog(
       context: context,
@@ -37,13 +34,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
       context: context,
       builder: (context) => CategoryFormDialog(
         categoryType: categoryType,
-
-        //the 1st one didnt have async
         onSave: (newCategory) async {
-          /*setState(() {
-            _categories.add(newCategory);
-          });*/
-
           try {
             await Provider.of<CategoryProvider>(context, listen: false)
                 .addCategory({
@@ -57,6 +48,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
             if (!mounted) return;
             Navigator.pop(context);
           } catch (e) {
+            if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('error adding category: $e')),
             );
@@ -153,9 +145,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
           ),
         );
       }
-
-      //final categories = categoryProvider.categories;
-
       return Scaffold(
         appBar: AppBar(
           title: const Text("Categories"),
@@ -181,13 +170,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           colors: [Colors.blue, Colors.purple]),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         'Discover Featured Goals',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
+                        style: TtextTheme.lightText.titleMedium,
                       ),
                     ),
                   ),
@@ -235,10 +221,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     },
                   ),
                 ),
-                /*FloatingActionButton(
-                  onPressed: _showCategoryTypeDialog,
-                  child: const Icon(Icons.add),
-                )*/
               ],
             ),
           ),

@@ -30,7 +30,9 @@ class BudgetCategory {
       name: data['name'] ?? '',
       amount: (data['amount'] ?? 0).toDouble(),
       categoryType: data['type'] ?? 'Free',
-      goalAmount: (data['goalAmount'] ?? 0).toDouble(),
+      goalAmount: data['goalAmount'] != null
+          ? (data['goalAmount'] as num).toDouble()
+          : null,
       isLocked: (data['islocked'] as bool?) ?? false,
       createdAt: data['createdAt'] is Timestamp
           ? (data['createdAt'] as Timestamp).toDate()

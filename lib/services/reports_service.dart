@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 class ReportsService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -42,21 +43,12 @@ class ReportsService {
     return snapshot.docs;
   }
 
-  // Total savings overview across all categories
+  // Total savings overview across all categories - client-side implementation
   Future<double> getTotalSavings() async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
-      // First try to get the pre-calculated total from user document
-      DocumentSnapshot userDoc = await _getUserDoc().get();
-      if (userDoc.exists) {
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-        if (userData.containsKey('totalSavings')) {
-          return userData['totalSavings'] ?? 0.0;
-        }
-      }
-
-      // Fall back to calculating from categories if not available
+      // Calculate from categories directly (client-side processing)
       List<DocumentSnapshot> categories = await getUserCategories();
       double totalSavings = 0;
 
@@ -68,21 +60,10 @@ class ReportsService {
       return totalSavings;
     } catch (e) {
       if (kDebugMode) {
-        print('Error getting total savings: $e');
+        print('Error calculating total savings: $e');
       }
-      // Fall back to calculating from categories
-      List<DocumentSnapshot> categories = await getUserCategories();
-      double totalSavings = 0;
-
-      for (var category in categories) {
-        Map<String, dynamic> data = category.data() as Map<String, dynamic>;
-        totalSavings += data['amount'] ?? 0.0;
-      }
-
-      return totalSavings;
+      return 0.0;
     }
-
-    //return allTransactions;
   }
 
   // Get monthly summary (deposits, withdrawals by month)
@@ -92,86 +73,8 @@ class ReportsService {
 
     Map<String, Map<String, double>> monthlySummary = {};
 
-    // First check if we have pre-calculated summaries
     try {
-      List<String> monthKeys = [];
-
-      // Generate all month keys between start and end date
-      DateTime current = DateTime(startDate.year, startDate.month);
-      while (current.isBefore(DateTime(endDate.year, endDate.month + 1))) {
-        String monthKey = DateFormat('yyyy-MM').format(current);
-        monthKeys.add(monthKey);
-
-        // Initialize empty summary for this month
-        monthlySummary[monthKey] = {
-          'deposits': 0.0,
-          'withdrawals': 0.0,
-          'net': 0.0,
-        };
-
-        current = DateTime(current.year, current.month + 1);
-      }
-
-      // Try to get pre-calculated summaries
-      for (String monthKey in monthKeys) {
-        DocumentSnapshot summaryDoc =
-            await _getMonthlySummariesCollection().doc(monthKey).get();
-
-        if (summaryDoc.exists) {
-          Map<String, dynamic> data = summaryDoc.data() as Map<String, dynamic>;
-          monthlySummary[monthKey] = {
-            'deposits': data['deposits'] ?? 0.0,
-            'withdrawals': data['withdrawals'] ?? 0.0,
-            'net': data['net'] ?? 0.0,
-          };
-        }
-      }
-
-      // For months without pre-calculated data, calculate from transactions
-      List<Map<String, dynamic>> transactions =
-          await getTransactionsForTimeRange(startDate, endDate);
-
-      for (var transaction in transactions) {
-        Timestamp timestamp = transaction['date'];
-        DateTime date = timestamp.toDate();
-        String monthKey = DateFormat('yyyy-MM').format(date);
-
-        // Skip if we already have pre-calculated data for this month
-        if (!monthlySummary.containsKey(monthKey) ||
-            (monthlySummary[monthKey]!['deposits'] == 0 &&
-                monthlySummary[monthKey]!['withdrawals'] == 0)) {
-          if (!monthlySummary.containsKey(monthKey)) {
-            monthlySummary[monthKey] = {
-              'deposits': 0.0,
-              'withdrawals': 0.0,
-              'net': 0.0,
-            };
-          }
-
-          if (transaction['transactionType'] == 'deposit') {
-            monthlySummary[monthKey]!['deposits'] =
-                (monthlySummary[monthKey]!['deposits'] ?? 0.0) +
-                    transaction['amount'];
-            monthlySummary[monthKey]!['net'] =
-                (monthlySummary[monthKey]!['net'] ?? 0.0) +
-                    transaction['amount'];
-          } else if (transaction['transactionType'] == 'withdrawal') {
-            monthlySummary[monthKey]!['withdrawals'] =
-                (monthlySummary[monthKey]!['withdrawals'] ?? 0.0) +
-                    transaction['amount'];
-            monthlySummary[monthKey]!['net'] =
-                (monthlySummary[monthKey]!['net'] ?? 0.0) -
-                    transaction['amount'];
-          }
-        }
-      }
-
-      return monthlySummary;
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error getting pre-calculated monthly summaries: $e');
-      }
-      // Fall back to calculating everything from transactions
+      // Process all transactions directly (client-side processing)
       List<Map<String, dynamic>> transactions =
           await getTransactionsForTimeRange(startDate, endDate);
 
@@ -193,6 +96,14 @@ class ReportsService {
         DateTime date = timestamp.toDate();
         String monthKey = DateFormat('yyyy-MM').format(date);
 
+        if (!monthlySummary.containsKey(monthKey)) {
+          monthlySummary[monthKey] = {
+            'deposits': 0.0,
+            'withdrawals': 0.0,
+            'net': 0.0,
+          };
+        }
+
         if (transaction['transactionType'] == 'deposit') {
           monthlySummary[monthKey]!['deposits'] =
               (monthlySummary[monthKey]!['deposits'] ?? 0.0) +
@@ -209,6 +120,11 @@ class ReportsService {
       }
 
       return monthlySummary;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error calculating monthly summaries: $e');
+      }
+      return {};
     }
   }
 
@@ -232,9 +148,8 @@ class ReportsService {
     }
 
     try {
-      // If requesting trends for all categories, check if we have pre-calculated monthly summaries
       if (categoryId == null) {
-        // Get monthly summaries
+        // For all categories, calculate from monthly summary
         Map<String, Map<String, double>> monthlySummary =
             await getMonthlySummary(startDate, endDate);
 
@@ -263,7 +178,7 @@ class ReportsService {
           }
         }
       } else {
-        // For a specific category, we need to calculate from transactions
+        // For a specific category, calculate from transactions
         double currentBalance = 0;
 
         // Get all transactions for this category
@@ -303,96 +218,12 @@ class ReportsService {
         }
       }
     } catch (e) {
-      print('Error calculating trends: $e');
-      // Fall back to calculating everything from transactions
-      if (categoryId != null) {
-        // For a specific category
-        DocumentSnapshot categorySnapshot =
-            await _getCategoriesCollection().doc(categoryId).get();
-        if (categorySnapshot.exists) {
-          double currentBalance = 0;
-
-          // Get all transactions for this category
-          QuerySnapshot transactions = await _firestore
-              .collection('users')
-              .doc(currentUserId)
-              .collection('categories')
-              .doc(categoryId)
-              .collection('transactions')
-              .orderBy('date')
-              .get();
-
-          // Calculate balance at each point in time
-          for (var transaction in transactions.docs) {
-            Map<String, dynamic> data =
-                transaction.data() as Map<String, dynamic>;
-            Timestamp timestamp = data['date'];
-            DateTime date = timestamp.toDate();
-
-            // Skip transactions before our start date
-            if (date.isBefore(startDate)) continue;
-
-            // Update balance based on transaction type
-            if (data['transactionType'] == 'deposit') {
-              currentBalance += data['amount'] ?? 0.0;
-            } else if (data['transactionType'] == 'withdrawal') {
-              currentBalance -= data['amount'] ?? 0.0;
-            }
-
-            // Update all future points with this balance
-            for (int i = 0; i < trendPoints.length; i++) {
-              DateTime pointDate = trendPoints[i]['date'];
-              if (!pointDate.isBefore(DateTime(date.year, date.month))) {
-                trendPoints[i]['balance'] = currentBalance;
-              }
-            }
-          }
-        }
-      } else {
-        // For all categories
-        List<DocumentSnapshot> categories = await getUserCategories();
-
-        for (var category in categories) {
-          double currentBalance = 0;
-
-          // Get all transactions for this category
-          QuerySnapshot transactions = await _firestore
-              .collection('users')
-              .doc(currentUserId)
-              .collection('categories')
-              .doc(category.id)
-              .collection('transactions')
-              .orderBy('date')
-              .get();
-
-          // Calculate balance at each point in time
-          for (var transaction in transactions.docs) {
-            Map<String, dynamic> data =
-                transaction.data() as Map<String, dynamic>;
-            Timestamp timestamp = data['date'];
-            DateTime date = timestamp.toDate();
-
-            // Skip transactions before our start date
-            if (date.isBefore(startDate)) continue;
-
-            // Update balance based on transaction type
-            if (data['transactionType'] == 'deposit') {
-              currentBalance += data['amount'] ?? 0.0;
-            } else if (data['transactionType'] == 'withdrawal') {
-              currentBalance -= data['amount'] ?? 0.0;
-            }
-
-            // Update all future points with this balance
-            for (int i = 0; i < trendPoints.length; i++) {
-              DateTime pointDate = trendPoints[i]['date'];
-              if (!pointDate.isBefore(DateTime(date.year, date.month))) {
-                trendPoints[i]['balance'] =
-                    (trendPoints[i]['balance'] ?? 0.0) + currentBalance;
-              }
-            }
-          }
-        }
+      if (kDebugMode) {
+        print('Error calculating trends: $e');
       }
+
+      // Fall back to empty trends
+      return trendPoints;
     }
 
     // Format for return
@@ -404,38 +235,56 @@ class ReportsService {
     return trendPoints;
   }
 
-  // Get weekly reports
+  // Get weekly reports - client-side implementation
   Future<List<Map<String, dynamic>>> getWeeklyReports({int limit = 10}) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
-      QuerySnapshot snapshot = await _getWeeklyReportsCollection()
-          .orderBy('endDate', descending: true)
-          .limit(limit)
-          .get();
-
+      // Calculate weekly reports on the client side
+      DateTime now = DateTime.now();
       List<Map<String, dynamic>> reports = [];
 
-      for (var doc in snapshot.docs) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      // Generate the last 'limit' weeks
+      for (int i = 0; i < limit; i++) {
+        DateTime endDate = now.subtract(Duration(days: 7 * i));
+        DateTime startDate = endDate.subtract(const Duration(days: 7));
+
+        // Get transactions for this week
+        List<Map<String, dynamic>> weekTransactions =
+            await getTransactionsForTimeRange(startDate, endDate);
+
+        double deposits = 0.0;
+        double withdrawals = 0.0;
+
+        // Calculate totals
+        for (var transaction in weekTransactions) {
+          if (transaction['transactionType'] == 'deposit') {
+            deposits += transaction['amount'];
+          } else if (transaction['transactionType'] == 'withdrawal') {
+            withdrawals += transaction['amount'];
+          }
+        }
+
         reports.add({
-          'reportId': doc.id,
-          'startDate': data['startDate'],
-          'endDate': data['endDate'],
-          'deposits': data['deposits'] ?? 0.0,
-          'withdrawals': data['withdrawals'] ?? 0.0,
-          'net': data['net'] ?? 0.0,
+          'reportId': 'week-${i + 1}',
+          'startDate': Timestamp.fromDate(startDate),
+          'endDate': Timestamp.fromDate(endDate),
+          'deposits': deposits,
+          'withdrawals': withdrawals,
+          'net': deposits - withdrawals,
         });
       }
 
       return reports;
     } catch (e) {
-      print('Error getting weekly reports: $e');
+      if (kDebugMode) {
+        print('Error calculating weekly reports: $e');
+      }
       return [];
     }
   }
 
-  // Get category growth rate (percentage change over time)
+  // Get category growth rate (percentage change over time) - client-side implementation
   Future<Map<String, dynamic>> getCategoryGrowthRate(String categoryId) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
@@ -455,6 +304,7 @@ class ReportsService {
       DateTime now = DateTime.now();
       DateTime threeMonthsAgo = DateTime(now.year, now.month - 3, now.day);
 
+      // Get all transactions for this category
       QuerySnapshot transactions = await _firestore
           .collection('users')
           .doc(currentUserId)
@@ -474,7 +324,7 @@ class ReportsService {
         };
       }
 
-      // Group by month
+      // Group by month - client-side processing
       Map<String, double> monthlyNet = {};
 
       for (var doc in transactions.docs) {
@@ -517,31 +367,41 @@ class ReportsService {
     }
   }
 
-  // Get category breakdown (amounts in each category)
+  // Get category breakdown (amounts in each category) - client-side implementation
   Future<List<Map<String, dynamic>>> getCategoryBreakdown() async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
-    List<DocumentSnapshot> categories = await getUserCategories();
-    List<Map<String, dynamic>> breakdown = [];
+    try {
+      List<DocumentSnapshot> categories = await getUserCategories();
+      List<Map<String, dynamic>> breakdown = [];
 
-    for (var category in categories) {
-      Map<String, dynamic> data = category.data() as Map<String, dynamic>;
-      breakdown.add({
-        'categoryId': category.id,
-        'name': data['name'] ?? 'Unknown',
-        'amount': data['amount'] ?? 0.0,
-        'goalAmount': data['goalAmount'] ?? 0.0,
-        'progress': data['goalAmount'] > 0
-            ? ((data['amount'] ?? 0.0) / data['goalAmount'] * 100)
-            : 100.0,
-      });
+      for (var category in categories) {
+        Map<String, dynamic> data = category.data() as Map<String, dynamic>;
+        double amount = data['amount'] ?? 0.0;
+        double goalAmount = data['goalAmount'] ?? 0.0;
+        double progress = goalAmount > 0 ? (amount / goalAmount * 100) : 100.0;
+
+        breakdown.add({
+          'categoryId': category.id,
+          'name': data['name'] ?? 'Unknown',
+          'amount': amount,
+          'goalAmount': goalAmount,
+          'progress': progress,
+        });
+      }
+
+      return breakdown;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error calculating category breakdown: $e');
+      }
+      return [];
     }
-
-    return breakdown;
   }
 
   // Get transactions for a specific time range across all categories
-  Future<List<Map<String, dynamic>>> getTransactionsForTimeRange(DateTime startDate, DateTime endDate) async {
+  Future<List<Map<String, dynamic>>> getTransactionsForTimeRange(
+      DateTime startDate, DateTime endDate) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     List<DocumentSnapshot> categories = await getUserCategories();
@@ -574,7 +434,303 @@ class ReportsService {
         });
       }
     }
-    //added this
     return allTransactions;
+  }
+
+  // Create or update monthly summary document for a specific month
+  Future<void> updateMonthlySummary(
+      DateTime date, double amount, String transactionType) async {
+    if (currentUserId == null) throw Exception('User not authenticated');
+
+    try {
+      // Format the month key (YYYY-MM)
+      String monthKey = DateFormat('yyyy-MM').format(date);
+
+      // Reference to the monthly summary document
+      DocumentReference monthlySummaryRef =
+          _getMonthlySummariesCollection().doc(monthKey);
+
+      // Get the current document or create if it doesn't exist
+      DocumentSnapshot monthlySummaryDoc = await monthlySummaryRef.get();
+
+      if (monthlySummaryDoc.exists) {
+        // Update existing document
+        Map<String, dynamic> data =
+            monthlySummaryDoc.data() as Map<String, dynamic>;
+
+        if (transactionType == 'deposit') {
+          double deposits = (data['deposits'] ?? 0.0) + amount;
+          double net = (data['net'] ?? 0.0) + amount;
+          await monthlySummaryRef.update({
+            'deposits': deposits,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        } else if (transactionType == 'withdrawal') {
+          double withdrawals = (data['withdrawals'] ?? 0.0) + amount;
+          double net = (data['net'] ?? 0.0) - amount;
+          await monthlySummaryRef.update({
+            'withdrawals': withdrawals,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        }
+      } else {
+        // Create new document
+        Map<String, dynamic> newData = {
+          'month': monthKey,
+          'startDate': Timestamp.fromDate(DateTime(date.year, date.month, 1)),
+          'endDate': Timestamp.fromDate(DateTime(date.year, date.month + 1, 0)),
+          'deposits': transactionType == 'deposit' ? amount : 0.0,
+          'withdrawals': transactionType == 'withdrawal' ? amount : 0.0,
+          'net': transactionType == 'deposit' ? amount : -amount,
+          'createdAt': FieldValue.serverTimestamp(),
+          'lastUpdated': FieldValue.serverTimestamp(),
+        };
+
+        await monthlySummaryRef.set(newData);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error updating monthly summary: $e');
+      }
+      rethrow;
+    }
+  }
+
+  // Reverse a transaction's effect on monthly summary
+  Future<void> reverseMonthlySummaryTransaction(
+      DateTime date, double amount, String transactionType) async {
+    if (currentUserId == null) throw Exception('User not authenticated');
+
+    try {
+      // Format the month key (YYYY-MM)
+      String monthKey = DateFormat('yyyy-MM').format(date);
+
+      // Reference to the monthly summary document
+      DocumentReference monthlySummaryRef =
+          _getMonthlySummariesCollection().doc(monthKey);
+
+      // Get the current document
+      DocumentSnapshot monthlySummaryDoc = await monthlySummaryRef.get();
+
+      if (monthlySummaryDoc.exists) {
+        Map<String, dynamic> data =
+            monthlySummaryDoc.data() as Map<String, dynamic>;
+
+        if (transactionType == 'deposit') {
+          // Reverse a deposit by reducing the deposits and net
+          double deposits = (data['deposits'] ?? 0.0) - amount;
+          double net = (data['net'] ?? 0.0) - amount;
+          await monthlySummaryRef.update({
+            'deposits': deposits,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        } else if (transactionType == 'withdrawal') {
+          // Reverse a withdrawal by reducing the withdrawals and increasing net
+          double withdrawals = (data['withdrawals'] ?? 0.0) - amount;
+          double net = (data['net'] ?? 0.0) + amount;
+          await monthlySummaryRef.update({
+            'withdrawals': withdrawals,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error reversing monthly summary transaction: $e');
+      }
+      rethrow;
+    }
+  }
+
+  // Update weekly report for a specific week
+  Future<void> updateWeeklyReport(
+      DateTime transactionDate, double amount, String transactionType) async {
+    if (currentUserId == null) throw Exception('User not authenticated');
+
+    try {
+      // Calculate the start and end of the week containing the transaction
+      int weekday = transactionDate.weekday;
+      DateTime startOfWeek =
+          transactionDate.subtract(Duration(days: weekday - 1));
+      startOfWeek = DateTime(startOfWeek.year, startOfWeek.month,
+          startOfWeek.day); // Normalize to start of day
+      DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+      endOfWeek = DateTime(endOfWeek.year, endOfWeek.month, endOfWeek.day, 23,
+          59, 59); // End of day
+
+      // Create a unique ID for the week
+      String weekId =
+          'week-${startOfWeek.year}-${startOfWeek.month}-${startOfWeek.day}';
+
+      // Reference to the weekly report document
+      DocumentReference weeklyReportRef =
+          _getWeeklyReportsCollection().doc(weekId);
+
+      // Get the current document or create if it doesn't exist
+      DocumentSnapshot weeklyReportDoc = await weeklyReportRef.get();
+
+      if (weeklyReportDoc.exists) {
+        // Update existing document
+        Map<String, dynamic> data =
+            weeklyReportDoc.data() as Map<String, dynamic>;
+
+        if (transactionType == 'deposit') {
+          double deposits = (data['deposits'] ?? 0.0) + amount;
+          double net = (data['net'] ?? 0.0) + amount;
+          await weeklyReportRef.update({
+            'deposits': deposits,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        } else if (transactionType == 'withdrawal') {
+          double withdrawals = (data['withdrawals'] ?? 0.0) + amount;
+          double net = (data['net'] ?? 0.0) - amount;
+          await weeklyReportRef.update({
+            'withdrawals': withdrawals,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        }
+      } else {
+        // Create new document
+        Map<String, dynamic> newData = {
+          'reportId': weekId,
+          'startDate': Timestamp.fromDate(startOfWeek),
+          'endDate': Timestamp.fromDate(endOfWeek),
+          'deposits': transactionType == 'deposit' ? amount : 0.0,
+          'withdrawals': transactionType == 'withdrawal' ? amount : 0.0,
+          'net': transactionType == 'deposit' ? amount : -amount,
+          'createdAt': FieldValue.serverTimestamp(),
+          'lastUpdated': FieldValue.serverTimestamp(),
+        };
+
+        await weeklyReportRef.set(newData);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error updating weekly report: $e');
+      }
+      rethrow;
+    }
+  }
+
+  // Reverse a transaction's effect on weekly report
+  Future<void> reverseWeeklyReportTransaction(
+      DateTime transactionDate, double amount, String transactionType) async {
+    if (currentUserId == null) throw Exception('User not authenticated');
+
+    try {
+      // Calculate the start and end of the week containing the transaction
+      int weekday = transactionDate.weekday;
+      DateTime startOfWeek =
+          transactionDate.subtract(Duration(days: weekday - 1));
+      startOfWeek = DateTime(startOfWeek.year, startOfWeek.month,
+          startOfWeek.day); // Normalize to start of day
+
+      // Create a unique ID for the week
+      String weekId =
+          'week-${startOfWeek.year}-${startOfWeek.month}-${startOfWeek.day}';
+
+      // Reference to the weekly report document
+      DocumentReference weeklyReportRef =
+          _getWeeklyReportsCollection().doc(weekId);
+
+      // Get the current document
+      DocumentSnapshot weeklyReportDoc = await weeklyReportRef.get();
+
+      if (weeklyReportDoc.exists) {
+        Map<String, dynamic> data =
+            weeklyReportDoc.data() as Map<String, dynamic>;
+
+        if (transactionType == 'deposit') {
+          // Reverse a deposit by reducing the deposits and net
+          double deposits = (data['deposits'] ?? 0.0) - amount;
+          double net = (data['net'] ?? 0.0) - amount;
+          await weeklyReportRef.update({
+            'deposits': deposits,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        } else if (transactionType == 'withdrawal') {
+          // Reverse a withdrawal by reducing the withdrawals and increasing net
+          double withdrawals = (data['withdrawals'] ?? 0.0) - amount;
+          double net = (data['net'] ?? 0.0) + amount;
+          await weeklyReportRef.update({
+            'withdrawals': withdrawals,
+            'net': net,
+            'lastUpdated': FieldValue.serverTimestamp(),
+          });
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error reversing weekly report transaction: $e');
+      }
+      rethrow;
+    }
+  }
+
+  // Initialize collections for a new user
+  Future<void> initializeCollections() async {
+    if (currentUserId == null) throw Exception('User not authenticated');
+
+    try {
+      // Create initial monthly summary for current month
+      DateTime now = DateTime.now();
+      String currentMonthKey = DateFormat('yyyy-MM').format(now);
+      DocumentReference currentMonthRef =
+          _getMonthlySummariesCollection().doc(currentMonthKey);
+
+      DocumentSnapshot currentMonthDoc = await currentMonthRef.get();
+      if (!currentMonthDoc.exists) {
+        await currentMonthRef.set({
+          'month': currentMonthKey,
+          'startDate': Timestamp.fromDate(DateTime(now.year, now.month, 1)),
+          'endDate': Timestamp.fromDate(DateTime(now.year, now.month + 1, 0)),
+          'deposits': 0.0,
+          'withdrawals': 0.0,
+          'net': 0.0,
+          'createdAt': FieldValue.serverTimestamp(),
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      }
+
+      // Create initial weekly report for current week
+      int weekday = now.weekday;
+      DateTime startOfWeek = now.subtract(Duration(days: weekday - 1));
+      startOfWeek =
+          DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
+      DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+      endOfWeek =
+          DateTime(endOfWeek.year, endOfWeek.month, endOfWeek.day, 23, 59, 59);
+
+      String weekId =
+          'week-${startOfWeek.year}-${startOfWeek.month}-${startOfWeek.day}';
+      DocumentReference weeklyReportRef =
+          _getWeeklyReportsCollection().doc(weekId);
+
+      DocumentSnapshot weeklyReportDoc = await weeklyReportRef.get();
+      if (!weeklyReportDoc.exists) {
+        await weeklyReportRef.set({
+          'reportId': weekId,
+          'startDate': Timestamp.fromDate(startOfWeek),
+          'endDate': Timestamp.fromDate(endOfWeek),
+          'deposits': 0.0,
+          'withdrawals': 0.0,
+          'net': 0.0,
+          'createdAt': FieldValue.serverTimestamp(),
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error initializing collections: $e');
+      }
+      rethrow;
+    }
   }
 }
