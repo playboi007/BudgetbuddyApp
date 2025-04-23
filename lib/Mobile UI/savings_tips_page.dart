@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/constants/savings_tips.dart';
-import '../utils/constants/text_strings.dart';
-import '../utils/theme/text_theme.dart';
+
 
 class SavingsTipsPage extends StatelessWidget {
   const SavingsTipsPage({super.key});

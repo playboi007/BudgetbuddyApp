@@ -9,14 +9,13 @@ import 'package:budgetbuddy_app/utils/constants/colors.dart';
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 
 class TransactionCalendarPage extends StatefulWidget {
-  const TransactionCalendarPage({Key? key}) : super(key: key);
+  const TransactionCalendarPage({super.key});
 
   @override
-  _TransactionCalendarPageState createState() =>
-      _TransactionCalendarPageState();
+  TransactionCalendarPageState createState() => TransactionCalendarPageState();
 }
 
-class _TransactionCalendarPageState extends State<TransactionCalendarPage> {
+class TransactionCalendarPageState extends State<TransactionCalendarPage> {
   final ReportsService _reportsService = ReportsService();
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();

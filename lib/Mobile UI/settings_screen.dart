@@ -20,11 +20,12 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class SettingsScreenState extends State<SettingsScreen> {
   final user = FirebaseAuth.instance.currentUser;
+  //ignore: unused_field
   bool _isDarkMode = false;
   bool _notificationsEnabled = true;
 
@@ -41,6 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //ignore: unused_local_variable
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
