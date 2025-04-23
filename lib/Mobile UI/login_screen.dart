@@ -1,23 +1,18 @@
 import 'package:budgetbuddy_app/utils/constants/image_strings.dart';
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
-import 'package:budgetbuddy_app/utils/theme/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:budgetbuddy_app/Mobile UI/signup_screen.dart';
 import 'package:budgetbuddy_app/utils/validators.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:budgetbuddy_app/widgets/bottom_navbar.dart';
 
 class AuthenticationFlow extends StatelessWidget {
   const AuthenticationFlow({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: TappTheme.lightTheme,
-      darkTheme: TappTheme.darkTheme,
-      home: const LoginScreen(),
-    );
+    return const LoginScreen();
   }
 }
 
@@ -59,7 +54,11 @@ class _LoginScreenState extends State<LoginScreen>
         }
 
         if (!mounted) return;
-        Navigator.pop(context);
+        // Navigate to the BottomNavigation widget instead of just popping the context
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNavigation()),
+        );
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? 'Login failed')),
@@ -107,7 +106,11 @@ class _LoginScreenState extends State<LoginScreen>
       await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (!mounted) return;
-      Navigator.pop(context);
+      // Navigate to the BottomNavigation widget instead of just popping the context
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const BottomNavigation()),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Google sign in failed: ${e.toString()}')),
@@ -288,13 +291,13 @@ class _LoginScreenState extends State<LoginScreen>
               children: [
                 Checkbox(
                   value: _keepSignedIn,
-                  onChanged: (value) {
-                    setState(() async {
+                  onChanged: (value) async {
+                    setState(() {
                       _keepSignedIn = value ?? false;
-                      await FirebaseAuth.instance.setPersistence(_keepSignedIn
-                          ? Persistence.LOCAL
-                          : Persistence.SESSION);
                     });
+                    await FirebaseAuth.instance.setPersistence(
+                      _keepSignedIn ? Persistence.LOCAL : Persistence.SESSION
+                    );
                   },
                 ),
                 const Text('Keep me signed in'),

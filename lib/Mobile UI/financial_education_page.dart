@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../services/course_provider.dart';
 import '../data models/course_model.dart';
 import 'course_detail_page.dart';
+import 'savings_tips_page.dart';
+import '../utils/constants/savings_tips.dart';
 
 class FinancialEducationPage extends StatefulWidget {
   const FinancialEducationPage({super.key});
@@ -55,7 +57,16 @@ class _FinancialEducationPageState extends State<FinancialEducationPage> {
                   'Learn to manage your finances better',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 16),
+                buildTipsSection(context),
+                const SizedBox(height: 24),
+
+                Text(
+                  "DIVE INTO THE INTERACTIVE COURSES",
+                  style: TtextTheme.lightText.titleLarge,
+                ),
                 const SizedBox(height: 8),
+
                 const Text(
                   'Explore our interactive courses to improve your financial knowledge',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
@@ -79,12 +90,177 @@ class _FinancialEducationPageState extends State<FinancialEducationPage> {
                         );
                       },
                     )),
+                //const SizedBox(height: 32),
               ],
             ),
           );
         },
       ),
     );
+  }
+}
+
+Widget buildTipsSection(BuildContext context) {
+  // Get a subset of tips to display in the carousel
+  final featuredTips = SavingsTipsData.tips.take(3).toList();
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Savings Tips',
+            style: TtextTheme.lightText.titleMedium,
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SavingsTipsPage(),
+                ),
+              );
+            },
+            child: const Text('View All'),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      const Text(
+        'Quick tips to help you save more effectively',
+        style: TextStyle(fontSize: 14, color: Colors.grey),
+      ),
+      const SizedBox(height: 16),
+      SizedBox(
+        height: 180,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: featuredTips.length,
+          itemBuilder: (context, index) {
+            final tip = featuredTips[index];
+            // Convert hex color to Color object
+            Color backgroundColor = _hexToColor(tip.backgroundColor);
+
+            return Container(
+              width: 280,
+              margin: const EdgeInsets.only(right: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SavingsTipsPage(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor:
+                                  backgroundColor.withValues(alpha: 0.2),
+                              radius: 20,
+                              child: Icon(
+                                _getIconData(tip.iconName),
+                                color: backgroundColor,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                tip.title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: Text(
+                            tip.description,
+                            style: const TextStyle(fontSize: 14),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              tip.category,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: backgroundColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+// Helper method to convert hex color string to Color
+Color _hexToColor(String hexString) {
+  final hexColor = hexString.replaceAll('#', '');
+  return Color(int.parse('FF$hexColor', radix: 16));
+}
+
+// Helper method to get icon data from string
+IconData _getIconData(String iconName) {
+  switch (iconName) {
+    case 'calculate':
+      return Icons.calculate;
+    case 'autorenew':
+      return Icons.autorenew;
+    case 'hourglass_empty':
+      return Icons.hourglass_empty;
+    case 'account_balance':
+      return Icons.account_balance;
+    case 'find_in_page':
+      return Icons.find_in_page;
+    case 'savings':
+      return Icons.savings;
+    case 'trending_up':
+      return Icons.trending_up;
+    case 'favorite':
+      return Icons.favorite;
+    default:
+      return Icons.lightbulb_outline;
   }
 }
 

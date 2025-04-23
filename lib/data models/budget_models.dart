@@ -63,5 +63,5 @@ class BudgetCategory {
     };
   }
 
-  String get formattedAmount => 'Ksh ${amount.toStringAsFixed(0)}';
+  String get formattedAmount => 'Ksh.${amount.toStringAsFixed(0)}';
 }

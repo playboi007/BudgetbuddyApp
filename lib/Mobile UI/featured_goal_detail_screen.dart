@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:budgetbuddy_app/Mobile%20UI/new_category_form.dart';
 import 'package:budgetbuddy_app/data%20models/budget_models.dart';
+import 'package:budgetbuddy_app/utils/constants/colors.dart';
 
 class FeaturedGoalDetailScreen extends StatelessWidget {
   final DocumentSnapshot goal;
@@ -62,7 +63,7 @@ class FeaturedGoalDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: Appcolors.cardShadow,
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -138,7 +139,7 @@ class FeaturedGoalDetailScreen extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                            color: Appcolors.textWhite),
                       ),
                     ),
                   ),
@@ -166,6 +167,7 @@ class FeaturedGoalDetailScreen extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('${category.name} goal created successfully!'),
+                backgroundColor: Appcolors.success,
               ),
             );
           },

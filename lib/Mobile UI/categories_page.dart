@@ -20,6 +20,8 @@ class CategoriesPage extends StatefulWidget {
 class _CategoriesPageState extends State<CategoriesPage> {
   bool _isLoading = true;
   String? _error;
+
+  
   void _showCategoryTypeDialog() {
     showDialog(
       context: context,

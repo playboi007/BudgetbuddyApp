@@ -202,7 +202,7 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
                     Padding(
                       padding: const EdgeInsets.only(left: 30),
                       child: Text(
-                        '${amount.toStringAsFixed(2)}',
+                        '/${amount.toStringAsFixed(2)}',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),

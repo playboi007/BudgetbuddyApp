@@ -5,6 +5,21 @@ class TextStrings {
 
   static const String appName = "BUDGETBUDDY";
 
+  // Splash Screen
+  static const String splashTitle1 = "Welcome to BudgetBuddy";
+  static const String splashTitle2 = "Track Your Expenses";
+  static const String splashTitle3 = "Achieve Your Goals";
+  static const String splashDesc1 =
+      "Your personal finance companion to help you manage your money better.";
+  static const String splashDesc2 =
+      "Easily track and categorize your expenses to understand your spending habits.";
+  static const String splashDesc3 =
+      "Set savings goals and track your progress to financial freedom.";
+  static const String splashBack = "Back";
+  static const String splashNext = "Next";
+  static const String splashSkip = "Skip";
+  static const String splashGetStarted = "Get Started";
+
   static const String passwordregex =
       "Password must contain uppercase, lowercase, number and special symbol";
 
@@ -61,4 +76,19 @@ class TextStrings {
   static const String featCour = "Featured Courses";
 
   //notifications
+
+  // Home page widgets
+  static const String balance = "BALANCE";
+  static const String categories = "CATEGORIES";
+  static const String allocateFunds = "allocate funds";
+  // Greeting constants
+  static const String goodMorning = "Good Morning";
+  static const String goodAfternoon = "Good Afternoon";
+  static const String goodEvening = "Good Evening";
+  static const String transactions = "Transactions";
+  static const String noTransactions = "No transactions yet";
+  static const String transactionCalendar = "Transaction Calendar";
+  static const String addCategory = "Add Category";
+  static const String saved = "Saved:";
+  static const String goal = "Goal: Ksh";
 }

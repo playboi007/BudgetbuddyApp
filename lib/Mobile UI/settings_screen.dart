@@ -1,13 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:budgetbuddy_app/Mobile UI/splash_screen.dart';
+import 'package:budgetbuddy_app/services/theme_provider.dart';
+import 'package:budgetbuddy_app/utils/constants/colors.dart';
+import 'package:budgetbuddy_app/utils/constants/settings_strings.dart';
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -22,7 +29,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -32,40 +52,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16.0),
         children: [
           // Profile Section
-          _buildSectionHeader('Profile'),
+          _buildSectionHeader(SettingsStrings.profile),
           _buildProfileCard(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
           // Payment Methods Section
-          _buildSectionHeader('Payment Methods'),
+          _buildSectionHeader(SettingsStrings.paymentMethods),
           _buildPaymentMethodsCard(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
           // App Settings Section
-          _buildSectionHeader('App Settings'),
+          _buildSectionHeader(SettingsStrings.appSettings),
           _buildSettingsCard(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
           // Privacy Section
-          _buildSectionHeader('Privacy'),
+          _buildSectionHeader(SettingsStrings.privacy),
           _buildPrivacyCard(),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
 
           // About Section
-          _buildSectionHeader('About'),
+          _buildSectionHeader(SettingsStrings.about),
           _buildAboutCard(),
-          const SizedBox(height: 40),
+          const SizedBox(height: 16),
         ],
       ),
     );
   }
 
   Widget _buildSectionHeader(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 12.0, top: 8.0),
       child: Text(
         title,
-        style: TtextTheme.lightText.titleLarge,
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: isDark ? Appcolors.textWhite : Appcolors.textBlack,
+            ),
       ),
     );
   }
@@ -203,15 +228,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SwitchListTile(
-              title: const Text('Dark Mode'),
-              secondary: const Icon(Icons.dark_mode),
-              value: _isDarkMode,
-              onChanged: (value) {
-                setState(() {
-                  _isDarkMode = value;
-                });
-                // Implement theme change logic
+            // Find the theme toggle in your settings screen and replace it with:
+
+            Consumer<ThemeProvider>(
+              builder: (context, themeProvider, _) {
+                return SwitchListTile(
+                  title: const Text('Dark Mode'),
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme();
+                  },
+                  secondary: Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.dark_mode
+                        : Icons.light_mode,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                );
               },
             ),
             const Divider(),
@@ -286,6 +319,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            _buildSettingsTile(
+              'Test Splash Screen',
+              Icons.replay,
+              () async {
+                // Reset first_time flag and navigate to splash screen
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('first_time', true);
+                if (!mounted) return;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SplashScreen()),
+                );
+              },
+            ),
+            const Divider(),
             _buildSettingsTile(
               'App Version',
               Icons.info,
@@ -453,7 +501,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // Implement data download logic
               Navigator.pop(context);
 
-              // Show loading indicator
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -467,12 +514,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 final userData = await _downloadUserData();
 
                 // Close loading indicator
+                if (!mounted) return;
                 Navigator.pop(context);
 
                 // Show success message with file path
                 if (!mounted) return;
                 showDialog(
-                  
                   context: context,
                   builder: (context) => AlertDialog(
                     title: const Text('Download Complete'),
@@ -684,7 +731,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       userData['courseProgress'] = courseProgress;
 
-      // Save data to file
       final directory = await getApplicationDocumentsDirectory();
       final dateStr = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final filePath = '${directory.path}/budgetbuddy_data_$dateStr.json';
@@ -692,8 +738,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final file = File(filePath);
       await file.writeAsString(jsonEncode(userData));
 
-      // Show the file path in the console for debugging
-      print('Data saved to: $filePath');
+      if (kDebugMode) {
+        print('Data saved to: $filePath');
+      }
 
       return userData;
     } catch (e) {

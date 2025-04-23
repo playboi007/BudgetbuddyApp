@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:budgetbuddy_app/utils/constants/colors.dart';
 
 class FeaturedGoalCard extends StatelessWidget {
   final DocumentSnapshot goal;
@@ -37,7 +38,7 @@ class FeaturedGoalCard extends StatelessWidget {
                 end: Alignment.topCenter,
                 colors: [
                   Colors.black.withValues(alpha: 0.7),
-                  Colors.transparent
+                  Appcolors.transparent
                 ],
               ),
             ),

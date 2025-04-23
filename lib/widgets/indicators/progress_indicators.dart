@@ -16,20 +16,23 @@ class SavingsProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = currentAmount / goalAmount;
+    // Ensure progress is within valid range
+    final validProgress =
+        progress.isNaN || progress.isInfinite ? 0.0 : progress.clamp(0.0, 1.0);
 
     return CircularPercentIndicator(
       radius: 50,
       lineWidth: 12,
       animation: true,
-      percent: progress.clamp(0.0, 1.0),
+      percent: validProgress,
       center: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('${(progress * 100).toStringAsFixed(1)}%'),
+          Text('${(validProgress * 100).toStringAsFixed(1)}%'),
           Text(categoryName, style: const TextStyle(fontSize: 10)),
         ],
       ),
-      progressColor: _getProgressColor(progress),
+      progressColor: _getProgressColor(validProgress),
       circularStrokeCap: CircularStrokeCap.round,
     );
   }

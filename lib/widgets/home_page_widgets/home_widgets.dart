@@ -1,5 +1,8 @@
-import 'package:budgetbuddy_app/Mobile%20UI/new_category_form.dart';
+import 'package:budgetbuddy_app/widgets/category widgets/category_type_dialog.dart';
+import 'package:budgetbuddy_app/widgets/category widgets/category_form_dialog.dart';
 import 'package:budgetbuddy_app/Mobile%20UI/notification_screen.dart';
+import 'package:budgetbuddy_app/utils/constants/colors.dart';
+import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -10,7 +13,7 @@ import 'package:budgetbuddy_app/services/transaction_provider.dart';
 import 'package:budgetbuddy_app/services/category_provider.dart';
 import 'package:budgetbuddy_app/services/notification_provider.dart';
 import 'package:budgetbuddy_app/Mobile UI/category_report_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+ import 'package:budgetbuddy_app/Mobile UI/transaction_calendar_page.dart';
 
 class BalanceAndCategories extends StatelessWidget {
   const BalanceAndCategories({super.key});
@@ -30,7 +33,7 @@ class BalanceAndCategories extends StatelessWidget {
     }
 
     return Card(
-      color: Colors.blue[600],
+      color: Appcolors.blue600,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -49,10 +52,10 @@ class BalanceAndCategories extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
                         child: const Text(
-                          'BALANCE',
+                          TextStrings.balance,
                           style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
+                            fontSize: 14,
+                            color: Appcolors.textWhite54,
                           ),
                         ),
                       ),
@@ -62,7 +65,7 @@ class BalanceAndCategories extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Appcolors.textWhite,
                         ),
                       ),
                     ],
@@ -75,10 +78,10 @@ class BalanceAndCategories extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                       child: const Text(
-                        'CATEGORIES',
+                        TextStrings.categories,
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: Appcolors.white,
                         ),
                       ),
                     ),
@@ -90,7 +93,7 @@ class BalanceAndCategories extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Appcolors.textWhite,
                         ),
                       ),
                     ),
@@ -106,12 +109,12 @@ class BalanceAndCategories extends StatelessWidget {
                   // Button action
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.blue[600],
+                  backgroundColor: Appcolors.white,
+                  foregroundColor: Appcolors.blue600,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  child: const Text('allocate funds'),
+                  child: const Text(TextStrings.allocateFunds),
                 ),
               ),
             ),
@@ -123,13 +126,27 @@ class BalanceAndCategories extends StatelessWidget {
 }
 
 //userInfo widget
-class UserAppbar extends StatelessWidget {
+class UserAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
 
   const UserAppbar({
     super.key,
     required this.name,
   });
+
+  String _getTimeBasedGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return TextStrings.goodMorning;
+    } else if (hour < 17) {
+      return TextStrings.goodAfternoon;
+    } else {
+      return TextStrings.goodEvening;
+    }
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 10);
 
   @override
   Widget build(BuildContext context) {
@@ -138,70 +155,107 @@ class UserAppbar extends StatelessWidget {
 
     return Consumer<NotificationProvider>(
       builder: (context, notificationProvider, _) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Welcome, $name',
-                    style: TtextTheme.lightText.headlineMedium,
-                    overflow: TextOverflow.ellipsis,
+        return AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          automaticallyImplyLeading: false,
+          titleSpacing: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 12.0),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Appcolors.blue100,
+                    child: const Icon(
+                      Icons.person,
+                      color: Appcolors.blue,
+                      size: 24,
+                    ),
                   ),
                 ),
-                Stack(
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.notifications),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const NotificationScreen(),
-                          ),
-                        ).then((_) {
-                          // Refresh notifications when returning from notification screen
-                          notificationProvider.fetchNotifications();
-                        });
-                      },
+                    Text(
+                      _getTimeBasedGreeting(),
+                      style: TtextTheme.lightText.headlineMedium,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    if (notificationProvider.unreadCount > 0)
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: Text(
-                            notificationProvider.unreadCount > 9
-                                ? '9+'
-                                : notificationProvider.unreadCount.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
+                    Text(
+                      name,
+                      style: TtextTheme.lightText.bodyLarge,
+                    )
                   ],
                 ),
+              ),
+            ],
+          ),
+          actions: [
+            // Calendar Icon Button
+            IconButton(
+              icon: const Icon(Icons.calendar_month),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TransactionCalendarPage(),
+                  ),
+                );
+              },
+            ),
+            // Notification Icon Button with Badge
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.notifications),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ),
+                    ).then((_) {
+                      // Refresh notifications when returning from notification screen
+                      notificationProvider.fetchNotifications();
+                    });
+                  },
+                ),
+                if (notificationProvider.unreadCount > 0)
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Appcolors.notificationBadgeRed,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        notificationProvider.unreadCount > 9
+                            ? '9+'
+                            : notificationProvider.unreadCount.toString(),
+                        style: const TextStyle(
+                          color: Appcolors.notificationBadgeText,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
               ],
             ),
-          ),
+          ],
         );
       },
     );
@@ -241,17 +295,17 @@ class _TransactionViewState extends State<TransactionView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Transactions',
+          TextStrings.transactions,
           style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blue[400]),
+              color: Appcolors.blue400),
         ),
         const SizedBox(height: 5),
         _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _transactions.isEmpty
-                ? const Center(child: Text('No transactions yet'))
+                ? const Center(child: Text(TextStrings.noTransactions))
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -261,7 +315,7 @@ class _TransactionViewState extends State<TransactionView> {
                       return TransactionItem(
                         title: transaction['categoryName'] ?? 'Unknown',
                         amount:
-                            'Ksh ${transaction['amount'].toStringAsFixed(2)}',
+                            'Ksh.${transaction['amount'].toStringAsFixed(2)}',
                         date: transaction['date'] != null
                             ? _formatDate(transaction['date'])
                             : 'Unknown date',
@@ -322,8 +376,27 @@ class TransactionItem extends StatelessWidget {
       child: ListTile(
         leading: Icon(icon),
         title: Text(title),
-        subtitle: Text('$amount - $date'),
-        //trailing: Icon(Icons.arrow_forward),
+        subtitle: Text('/$date', style: TextStyle(color: Appcolors.grey600)),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              amount.startsWith('-') ? Icons.remove : Icons.add,
+              size: 16,
+              color: amount.startsWith('-') ? Colors.red : Colors.blue,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: Text(
+                amount,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: amount.startsWith('-') ? Colors.red : Colors.blue,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -369,34 +442,53 @@ class CategoryList extends StatelessWidget {
       width: 160,
       margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Appcolors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue, width: 2),
+        border: Border.all(color: Appcolors.blue, width: 2),
       ),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NewCategoryForm(
-                categoryType: 'expense',
-                onSave: (category) {
-                  // Refresh categories after saving
-                  Provider.of<CategoryProvider>(context, listen: false)
-                      .loadCategories();
-                  Navigator.pop(context);
-                },
-              ),
+          showDialog(
+            context: context,
+            builder: (context) => CategoryTypeDialog(
+              onCategoryTypeSelected: (type) {
+                showDialog(
+                  context: context,
+                  builder: (context) => CategoryFormDialog(
+                    categoryType: type,
+                    onSave: (newCategory) async {
+                      try {
+                        await Provider.of<CategoryProvider>(context,
+                                listen: false)
+                            .addCategory({
+                          'name': newCategory.name,
+                          'amount': newCategory.amount,
+                          'categoryType': newCategory.categoryType,
+                          'goalAmount': newCategory.goalAmount,
+                          'isLocked': newCategory.isLocked,
+                        });
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('error adding category: $e')),
+                        );
+                      }
+                    },
+                  ),
+                );
+              },
             ),
           );
         },
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_circle_outline, size: 40, color: Colors.blue),
+            Icon(Icons.add_circle_outline, size: 40, color: Appcolors.blue),
             SizedBox(height: 8),
-            Text('Add Category',
-                style: TextStyle(fontSize: 16, color: Colors.blue)),
+            Text(TextStrings.addCategory,
+                style: TextStyle(fontSize: 16, color: Appcolors.blue)),
           ],
         ),
       ),
@@ -440,11 +532,11 @@ class BuildCategoryCard extends StatelessWidget {
             width: 160,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Appcolors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: Appcolors.grey.withValues(alpha: 0.3),
                   spreadRadius: 2,
                   blurRadius: 8,
                   offset: const Offset(0, 2),
@@ -473,28 +565,33 @@ class BuildCategoryCard extends StatelessWidget {
                         child: Icon(
                           category.isLocked ? Icons.lock : Icons.lock_open,
                           size: 18,
-                          color: category.isLocked ? Colors.red : Colors.green,
+                          color: category.isLocked
+                              ? Appcolors.error
+                              : Appcolors.success,
                         ),
                       ),
                   ],
                 ),
                 const Spacer(),
+                //const SizedBox(height: 10),
                 if (isSavings &&
                     category.goalAmount != null &&
                     category.goalAmount! > 0)
-                  CircularPercentIndicator(
-                    radius: 40,
-                    lineWidth: 6,
-                    percent: progress,
-                    center: Text(
-                      '${(progress * 100).toStringAsFixed(0)}%',
-                      style: const TextStyle(fontSize: 14),
+                  Center(
+                    child: CircularPercentIndicator(
+                      radius: 20,
+                      lineWidth: 6,
+                      percent: progress,
+                      center: Text(
+                        '${(progress * 100).toStringAsFixed(0)}%',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      progressColor: _getProgressColor(category),
+                      backgroundColor: Appcolors.grey200,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      animation: true,
+                      animationDuration: 1000,
                     ),
-                    progressColor: _getProgressColor(category),
-                    backgroundColor: Colors.grey[200]!,
-                    circularStrokeCap: CircularStrokeCap.round,
-                    animation: true,
-                    animationDuration: 1000,
                   ),
                 if (!isSavings ||
                     category.goalAmount == null ||
@@ -504,7 +601,7 @@ class BuildCategoryCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: Appcolors.textGrey600,
                     ),
                   ),
                 const SizedBox(height: 8),
@@ -512,12 +609,14 @@ class BuildCategoryCard extends StatelessWidget {
                     category.goalAmount != null &&
                     category.goalAmount! > 0) ...[
                   Text(
-                    'Saved: ${category.formattedAmount}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    '${TextStrings.saved} ${category.formattedAmount}',
+                    style:
+                        TextStyle(fontSize: 12, color: Appcolors.textGrey600),
                   ),
                   Text(
-                    'Goal: Ksh ${category.goalAmount?.toStringAsFixed(2) ?? "0.00"}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    '${TextStrings.goal} ${category.goalAmount?.toStringAsFixed(2) ?? "0.00"}',
+                    style:
+                        TextStyle(fontSize: 12, color: Appcolors.textGrey600),
                   ),
                 ],
               ],
@@ -529,12 +628,12 @@ class BuildCategoryCard extends StatelessWidget {
   }
 
   Color _getProgressColor(BudgetCategory category) {
-    if (category.isLocked) return Colors.grey;
+    if (category.isLocked) return Appcolors.grey;
     final progress = category.amount / category.goalAmount!;
     return progress < 0.5
-        ? Colors.orange
+        ? Appcolors.progressOrange
         : progress < 0.8
-            ? Colors.blue
-            : Colors.green;
+            ? Appcolors.progressBlue
+            : Appcolors.progressGreen;
   }
 }
