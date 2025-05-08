@@ -1,3 +1,4 @@
+import 'package:budgetbuddy_app/services/category_provider.dart';
 import 'package:budgetbuddy_app/widgets/category widgets/category_type_dialog.dart';
 import 'package:budgetbuddy_app/widgets/category widgets/category_form_dialog.dart';
 import 'package:budgetbuddy_app/Mobile%20UI/notification_screen.dart';
@@ -10,114 +11,190 @@ import 'package:budgetbuddy_app/data models/budget_models.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:budgetbuddy_app/services/transaction_provider.dart';
-import 'package:budgetbuddy_app/services/category_provider.dart';
 import 'package:budgetbuddy_app/services/notification_provider.dart';
 import 'package:budgetbuddy_app/Mobile UI/category_report_page.dart';
- import 'package:budgetbuddy_app/Mobile UI/transaction_calendar_page.dart';
+import 'package:budgetbuddy_app/Mobile UI/transaction_calendar_page.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:budgetbuddy_app/utils/shimmer.dart';
 
 class BalanceAndCategories extends StatelessWidget {
   const BalanceAndCategories({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final categoryProvider = Provider.of<CategoryProvider>(context);
-    double totalAmount = 0;
-    int categoryCount = 0;
+    return Consumer<CategoryProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return _buildShimmerBalanceCard();
+        }
+        final categories = provider.categoryModels;
+        double totalAmount = 0;
+        int categoryCount = 0;
 
-    if (categoryProvider.categories.isNotEmpty) {
-      totalAmount = categoryProvider.categories
-          .map((cat) => cat['amount'] as num)
-          .reduce((a, b) => a + b)
-          .toDouble();
-      categoryCount = categoryProvider.categories.length;
-    }
+        if (provider.error != null) {
+          return Card(
+            color: Appcolors.blue600,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.error_outline,
+                        color: Appcolors.white, size: 32),
+                    const SizedBox(height: 8),
+                    Text('Error loading categories',
+                        style: const TextStyle(color: Appcolors.white)),
+                    TextButton(
+                      onPressed: () {
+                        provider.loadCategories();
+                      },
+                      child: const Text('Retry',
+                          style: TextStyle(color: Appcolors.white)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
 
+        if (categories.isNotEmpty) {
+          totalAmount = categories
+              .map((cat) => cat.amount) // Updated to use BudgetCategory model
+              .reduce((a, b) => a + b)
+              .toDouble();
+          categoryCount = categories.length;
+        }
+
+        return Card(
+          color: Appcolors.blue600,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Balance Section
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                            child: const Text(
+                              TextStrings.balance,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Appcolors.textWhite54,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Ksh ${totalAmount.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Appcolors.textWhite,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Categories Section
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                          child: const Text(
+                            TextStrings.categories,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Appcolors.white,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                          child: Text(
+                            categoryCount.toString(),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Appcolors.textWhite,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Button action
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Appcolors.white,
+                      foregroundColor: Appcolors.blue600,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      child: const Text(TextStrings.allocateFunds),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildShimmerBalanceCard() {
     return Card(
       color: Appcolors.blue600,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Balance Section
                 Expanded(
                   flex: 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        child: const Text(
-                          TextStrings.balance,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Appcolors.textWhite54,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Ksh ${totalAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Appcolors.textWhite,
-                        ),
-                      ),
+                      const ShimmerWrapper(height: 14, width: 80),
+                      const SizedBox(height: 8),
+                      const ShimmerWrapper(height: 24, width: 120),
                     ],
                   ),
                 ),
-                // Categories Section
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                      child: const Text(
-                        TextStrings.categories,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Appcolors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                      child: Text(
-                        categoryCount.toString(),
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Appcolors.textWhite,
-                        ),
-                      ),
-                    ),
+                    const ShimmerWrapper(height: 16, width: 100),
+                    const SizedBox(height: 8),
+                    const ShimmerWrapper(height: 24, width: 40),
                   ],
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Button action
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Appcolors.white,
-                  foregroundColor: Appcolors.blue600,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  child: const Text(TextStrings.allocateFunds),
-                ),
-              ),
-            ),
+            const ShimmerWrapper(height: 40),
           ],
         ),
       ),
@@ -129,12 +206,12 @@ class BalanceAndCategories extends StatelessWidget {
 class UserAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String name;
 
-  const UserAppbar({
+  UserAppbar({
     super.key,
     required this.name,
   });
 
-  String _getTimeBasedGreeting() {
+  /*String _getTimeBasedGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
       return TextStrings.goodMorning;
@@ -143,16 +220,36 @@ class UserAppbar extends StatelessWidget implements PreferredSizeWidget {
     } else {
       return TextStrings.goodEvening;
     }
+  }*/
+
+  String customMessage(Map<int, String> messages) {
+    final currentHour = DateTime.now().hour;
+    // Sort the hours to check ranges in order
+    final hours = messages.keys.toList()..sort();
+    // Find the appropriate message for current hour
+    for (int i = 0; i < hours.length;) {
+      final startHour = hours[i];
+      final endHour = i < hours.length - 1 ? hours[i + 1] : 24;
+
+      if (currentHour >= startHour && currentHour < endHour) {
+        return messages[startHour]!;
+      }
+    }
+    return messages.values.first;
   }
+
+  final Map<int, String> messages = {
+    5: 'Good Morning!',
+    12: 'Good Afternoon!',
+    17: 'Good Evening!',
+    22: 'lovely night!',
+  };
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 10);
 
   @override
   Widget build(BuildContext context) {
-    //final currentUser = FirebaseAuth.instance.currentUser;
-    //final displayName = currentUser?.displayName ?? name;
-
     return Consumer<NotificationProvider>(
       builder: (context, notificationProvider, _) {
         return AppBar(
@@ -182,7 +279,7 @@ class UserAppbar extends StatelessWidget implements PreferredSizeWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _getTimeBasedGreeting(),
+                      customMessage(messages),
                       style: TtextTheme.lightText.headlineMedium,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -263,55 +360,35 @@ class UserAppbar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 //transaction listview widget
-class TransactionView extends StatefulWidget {
+class TransactionView extends StatelessWidget {
   const TransactionView({super.key});
 
   @override
-  State<TransactionView> createState() => _TransactionViewState();
-}
-
-class _TransactionViewState extends State<TransactionView> {
-  List<Map<String, dynamic>> _transactions = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchTransactions();
-  }
-
-  Future<void> _fetchTransactions() async {
-    final provider = Provider.of<TransactionProvider>(context, listen: false);
-    await provider.fetchRecentTransactions(limit: 5);
-    setState(() {
-      _transactions = provider.recentTransactions;
-      _isLoading = false;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          TextStrings.transactions,
-          style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Appcolors.blue400),
-        ),
-        const SizedBox(height: 5),
-        _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _transactions.isEmpty
+    return Consumer<TransactionProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return _buildShimmerTransactions();
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              TextStrings.transactions,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Appcolors.blue400),
+            ),
+            const SizedBox(height: 5),
+            provider.recentTransactions.isEmpty
                 ? const Center(child: Text(TextStrings.noTransactions))
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _transactions.length,
+                    itemCount: provider.recentTransactions.length,
                     itemBuilder: (context, index) {
-                      final transaction = _transactions[index];
+                      final transaction = provider.recentTransactions[index];
                       return TransactionItem(
                         title: transaction['categoryName'] ?? 'Unknown',
                         amount:
@@ -323,6 +400,40 @@ class _TransactionViewState extends State<TransactionView> {
                       );
                     },
                   )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildShimmerTransactions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const ShimmerWrapper(height: 24, width: 150),
+        const SizedBox(height: 16),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 3,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                leading: const ShimmerWrapper(
+                    height: 40, width: 40, borderRadius: 20),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const ShimmerWrapper(height: 16, width: 120),
+                    const SizedBox(height: 8),
+                    const ShimmerWrapper(height: 12, width: 80),
+                  ],
+                ),
+                trailing: const ShimmerWrapper(height: 24, width: 80),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -409,23 +520,58 @@ class CategoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CategoryProvider>(
-      builder: (context, categoryProvider, child) {
-        if (categoryProvider.categories.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return _buildShimmerCategoryList();
+        }
+        final categories = provider.categoryModels;
+
+        if (provider.error != null) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline,
+                    color: Appcolors.error, size: 32),
+                const SizedBox(height: 8),
+                Text('Error loading categories: ${provider.error}'),
+                TextButton(
+                  onPressed: () {
+                    provider.loadCategories();
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (categories.isEmpty && !provider.isLoading) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('No categories found'),
+                TextButton(
+                  onPressed: () => _showAddCategoryDialog(context, provider),
+                  child: const Text('Add Category'),
+                ),
+              ],
+            ),
+          );
         }
 
         return SizedBox(
           height: 200,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount:
-                categoryProvider.categories.length + 1, // +1 for add button
+            itemCount: categories.length + 1, // +1 for add button
             itemBuilder: (context, index) {
-              if (index == categoryProvider.categories.length) {
-                return _buildAddCategoryCard(context);
+              if (index == categories.length) {
+                return _buildAddCategoryCard(context, provider);
               }
-              final categoryData = categoryProvider.categories[index];
-              final category = BudgetCategory.fromFirestore(categoryData);
+              final categoryData = categories[index];
+              final category = BudgetCategory.fromFirestore(categoryData as Map<String, dynamic>);
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: BuildCategoryCard(category: category),
@@ -437,7 +583,90 @@ class CategoryList extends StatelessWidget {
     );
   }
 
-  Widget _buildAddCategoryCard(BuildContext context) {
+  void _showAddCategoryDialog(BuildContext context, CategoryProvider provider) {
+    showDialog(
+      context: context,
+      builder: (context) => CategoryTypeDialog(
+        onCategoryTypeSelected: (type) {
+          showDialog(
+            context: context,
+            builder: (context) => CategoryFormDialog(
+              categoryType: type,
+              onSave: (newCategory) async {
+                try {
+                  await provider.addCategory({
+                    'name': newCategory.name,
+                    'amount': newCategory.amount,
+                    'categoryType': newCategory.categoryType,
+                    'goalAmount': newCategory.goalAmount,
+                    'isLocked': newCategory.isLocked,
+                  });
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  // Refresh the category list
+                  provider.loadCategories();
+                } catch (e) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error adding category: $e')),
+                  );
+                }
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildShimmerCategoryList() {
+    return SizedBox(
+      height: 200,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 160,
+            margin: const EdgeInsets.all(8.0),
+            child: Shimmer(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.grey[300]!,
+                  Colors.grey[100]!,
+                  Colors.grey[300]!,
+                ],
+                stops: const [0.1, 0.5, 0.9],
+              ),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const ShimmerWrapper(height: 16, width: 80),
+                      const Spacer(),
+                      const ShimmerWrapper(height: 40, width: 40),
+                      const SizedBox(height: 8),
+                      const ShimmerWrapper(height: 12, width: 100),
+                      const SizedBox(height: 4),
+                      const ShimmerWrapper(height: 12, width: 120),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildAddCategoryCard(
+      BuildContext context, CategoryProvider provider) {
     return Container(
       width: 160,
       margin: const EdgeInsets.all(8.0),
@@ -458,9 +687,7 @@ class CategoryList extends StatelessWidget {
                     categoryType: type,
                     onSave: (newCategory) async {
                       try {
-                        await Provider.of<CategoryProvider>(context,
-                                listen: false)
-                            .addCategory({
+                        await provider.addCategory({
                           'name': newCategory.name,
                           'amount': newCategory.amount,
                           'categoryType': newCategory.categoryType,
@@ -469,10 +696,12 @@ class CategoryList extends StatelessWidget {
                         });
                         if (!context.mounted) return;
                         Navigator.pop(context);
+                        // Refresh the category list
+                        provider.loadCategories();
                       } catch (e) {
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('error adding category: $e')),
+                          SnackBar(content: Text('Error adding category: $e')),
                         );
                       }
                     },

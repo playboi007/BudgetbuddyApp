@@ -10,19 +10,25 @@ class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
 
   @override
-  _BottomNavigationState createState() => _BottomNavigationState();
+  BottomNavigationState createState() => BottomNavigationState();
 }
 
-class _BottomNavigationState extends State<BottomNavigation> {
+class BottomNavigationState extends State<BottomNavigation>
+    with AutomaticKeepAliveClientMixin {
   int _selectedIndex = 0;
+  late final List<Widget> _pages;
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const CategoriesPage(),
-    const ReportPage(),
-    const FinancialEducationPage(),
-    const SettingsScreen()
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const HomePage(),
+      const CategoriesPage(),
+      const ReportPage(),
+      const FinancialEducationPage(),
+      const SettingsScreen()
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
@@ -30,8 +36,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
@@ -49,4 +59,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

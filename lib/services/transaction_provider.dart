@@ -1,8 +1,8 @@
 import 'package:budgetbuddy_app/services/transaction_service.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'base_provider.dart';
 
-class TransactionProvider with ChangeNotifier {
+class TransactionProvider extends BaseProvider {
   final TransactionsService _transactionsService = TransactionsService();
 
   // State variables
@@ -136,8 +136,22 @@ class TransactionProvider with ChangeNotifier {
   }
 
   // Helper to set loading state
+  bool _mounted = true;
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
+  }
+
   void _setLoading(bool loading) {
+    if (!_mounted) return;
     _isLoading = loading;
-    notifyListeners();
+    Future.microtask(() => notifyListeners());
+  }
+
+  @override
+  Future<void> initialize() async {
+    await fetchRecentTransactions();
   }
 }

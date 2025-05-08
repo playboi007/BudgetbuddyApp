@@ -29,7 +29,7 @@ class DefaultFirebaseOptions {
   }
 
   static final FirebaseOptions web = FirebaseOptions(
-    apiKey: dotenv.env['FIREBASE_WEB_API_KEY'] ?? '',
+    apiKey: 'AIzaSyASCoJbEDOkE5bG-fG5m7E1D2YOhvhp9zo',
     appId: '1:32600895199:web:5bae922cf595142ccdc36a',
     messagingSenderId: '32600895199',
     projectId: 'budgetbuddy-6569f',
@@ -39,7 +39,7 @@ class DefaultFirebaseOptions {
   );
 
   static final FirebaseOptions android = FirebaseOptions(
-    apiKey: dotenv.env['FIREBASE_ANDROID_API_KEY'] ?? '',
+    apiKey: 'AIzaSyAucm2ZlfZmlqpTJ-hCYiNtezLGwZuAyng',
     appId: '1:32600895199:android:f6b027c3c2e9b20fcdc36a',
     messagingSenderId: '32600895199',
     projectId: 'budgetbuddy-6569f',
@@ -47,7 +47,7 @@ class DefaultFirebaseOptions {
   );
 
   static final FirebaseOptions ios = FirebaseOptions(
-    apiKey: dotenv.env['FIREBASE_IOS_API_KEY'] ?? '',
+    apiKey: 'AIzaSyBX3EQ8jnqkac7rWHoQg8_axH5KQVIFZwI',
     appId: '1:32600895199:ios:18feb9194767e877cdc36a',
     messagingSenderId: '32600895199',
     projectId: 'budgetbuddy-6569f',
@@ -56,7 +56,7 @@ class DefaultFirebaseOptions {
   );
 
   static FirebaseOptions macos = FirebaseOptions(
-    apiKey: dotenv.env['FIREBASE_MACOS_API_KEY'] ?? '',
+    apiKey: 'AIzaSyBX3EQ8jnqkac7rWHoQg8_axH5KQVIFZwI',
     appId: '1:32600895199:ios:18feb9194767e877cdc36a',
     messagingSenderId: '32600895199',
     projectId: 'budgetbuddy-6569f',

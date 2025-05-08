@@ -513,6 +513,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
               try {
                 // Get user data
+                // ignore: unused_local_variable
                 final userData = await _downloadUserData();
 
                 // Close loading indicator

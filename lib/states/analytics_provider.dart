@@ -1,9 +1,9 @@
 //this file is responsible for state management of reports
 import 'package:budgetbuddy_app/services/reports_service.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../services/base_provider.dart';
 
-class AnalyticsProvider with ChangeNotifier {
+class AnalyticsProvider extends BaseProvider {
   final ReportsService _reportsService = ReportsService();
 
   // State variables
@@ -29,11 +29,27 @@ class AnalyticsProvider with ChangeNotifier {
   DateTime get endDate => _endDate;
 
   // Initialize data
+  @override
   Future<void> initialize() async {
-    await fetchTotalSavings();
-    await fetchCategoryBreakdown();
-    await fetchMonthlySummary();
-    await fetchSavingsTrends();
+    await loadAnalytics();
+  }
+
+  Future<void> loadAnalytics() async {
+    _setLoading(true);
+    try {
+      // Load all analytics data in parallel
+      await Future.wait([
+        fetchTotalSavings(),
+        fetchCategoryBreakdown(),
+        fetchMonthlySummary(),
+        fetchSavingsTrends(),
+      ]);
+      _error = '';
+    } catch (e) {
+      _error = 'Failed to load analytics: ${e.toString()}';
+    } finally {
+      _setLoading(false);
+    }
   }
 
   // Set date range

@@ -63,5 +63,18 @@ class BudgetCategory {
     };
   }
 
+  BudgetCategory copyWith(Map<String, dynamic> updatedData) {
+    return BudgetCategory(
+      id: id,
+      name: updatedData['name'] ?? name,
+      amount: updatedData['amount'] ?? amount,
+      categoryType: updatedData['categoryType'] ?? categoryType,
+      goalAmount: updatedData['goalAmount'] ?? goalAmount,
+      isLocked: updatedData['isLocked'] ?? isLocked,
+      createdAt: updatedData['createdAt'] ?? createdAt,
+    );
+  }
+
+
   String get formattedAmount => 'Ksh.${amount.toStringAsFixed(0)}';
 }

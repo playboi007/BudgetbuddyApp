@@ -1,4 +1,4 @@
-import 'dart:math' as Math;
+import 'dart:math' as math;
 
 import 'package:budgetbuddy_app/states/analytics_provider.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class MonthlySummaryBarChart extends StatelessWidget {
-  const MonthlySummaryBarChart({Key? key}) : super(key: key);
+  const MonthlySummaryBarChart({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class MonthlySummaryBarChart extends StatelessWidget {
               alignment: BarChartAlignment.spaceAround,
               maxY: barGroups.fold(
                       0.0,
-                      (max, group) => Math.max(
+                      (max, group) => math.max(
                           max,
                           group.barRods
                               .fold(0.0, (sum, rod) => sum + rod.toY))) *

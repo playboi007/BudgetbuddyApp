@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import '../data models/course_model.dart';
+import 'base_provider.dart';
 
-class CourseProvider extends ChangeNotifier {
+class CourseProvider extends BaseProvider {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -293,5 +293,14 @@ class CourseProvider extends ChangeNotifier {
     _isLoading = false;
     _error = null;
     notifyListeners();
+  }
+
+  Future<void> loadCourses() async {
+    await fetchCourses();
+  }
+
+  @override
+  Future<void> initialize() async {
+    await loadCourses();
   }
 }

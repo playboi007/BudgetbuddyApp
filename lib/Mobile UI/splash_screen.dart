@@ -12,11 +12,28 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  // Page controller for the onboarding screens
-  final PageController _pageController = PageController();
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final PageController _pageController;
   int _currentPage = 0;
   final int _numPages = 3;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    try {
+      if (!mounted) return;
+      setState(() => _isInitialized = true);
+    } catch (e) {
+      debugPrint('Splash initialization error: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -26,6 +43,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       body: Stack(
         children: [

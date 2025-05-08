@@ -24,10 +24,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  late final TabController _tabController;
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
   bool _keepSignedIn = false;
+  bool _isLoading = false;
 
   // Controllers
   final TextEditingController _emailController = TextEditingController();
@@ -36,7 +37,10 @@ class _LoginScreenState extends State<LoginScreen>
 
   //login logicc which checks with the firebase
   Future<void> _loginWithEmail() async {
+    if (_isLoading) return;
+
     if (_formKey.currentState?.validate() ?? false) {
+      setState(() => _isLoading = true);
       try {
         final credential =
             await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -63,6 +67,10 @@ class _LoginScreenState extends State<LoginScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.message ?? 'Login failed')),
         );
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }
@@ -136,48 +144,51 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                TextStrings.appName,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async => !_isLoading,
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  TextStrings.appName,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Welcome back to the app',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
+                const SizedBox(height: 8),
+                const Text(
+                  'Welcome back to the app',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              TabBar(
-                controller: _tabController,
-                tabs: const [
-                  Tab(text: 'Email'),
-                  Tab(text: 'Phone Number'),
-                ],
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.grey,
-              ),
-              Expanded(
-                child: TabBarView(
+                const SizedBox(height: 32),
+                TabBar(
                   controller: _tabController,
-                  children: [
-                    _buildEmailLoginForm(),
-                    _buildPhoneLoginForm(),
+                  tabs: const [
+                    Tab(text: 'Email'),
+                    Tab(text: 'Phone Number'),
                   ],
+                  labelColor: Colors.blue,
+                  unselectedLabelColor: Colors.grey,
                 ),
-              ),
-            ],
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildEmailLoginForm(),
+                      _buildPhoneLoginForm(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

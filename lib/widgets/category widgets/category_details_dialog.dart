@@ -20,6 +20,7 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   late double amount;
   late double? goalAmount;
   late bool isSavingsCategory;
+  late final ValueNotifier<double> _progressNotifier;
 
   @override
   void initState() {
@@ -27,56 +28,58 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
     amount = widget.category.amount;
     isSavingsCategory = widget.category.categoryType.toLowerCase() == 'savings';
     goalAmount = widget.category.goalAmount;
+    _progressNotifier = ValueNotifier(_calculateProgress());
   }
 
-  double get progressPercentage {
+  double _calculateProgress() {
     if (!isSavingsCategory || goalAmount == null || goalAmount == 0) return 0;
     return amount / goalAmount!;
   }
 
   void _handleSave() {
-    // Implement save logic
-    showDialog(
+    showDialog<void>(  // Explicitly type dialog return
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Save to Goal'),
-        content: TextField(
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Amount to save',
-            prefixText: '\$',
-          ),
-          onSubmitted: (value) {
-            final amount = double.tryParse(value);
-            if (amount != null && amount > 0) {
-              setState(() {
-                this.amount += amount;
-              });
-              // Update in database/state management
-              Navigator.of(context).pop();
-            }
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Get input value and update
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-        ],
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Save to Goal'),
+            content: TextField(
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Amount to save',
+                prefixText: '\$',
+              ),
+              onSubmitted: (value) {
+                final newAmount = double.tryParse(value);
+                if (newAmount != null && newAmount > 0) {
+                  setState(() {
+                    amount += newAmount;
+                    _progressNotifier.value = _calculateProgress();
+                  });
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
   void _handleWithdraw() {
-    // Implement withdraw logic
-    showDialog(
+    showDialog<void>(  // Explicitly type dialog return
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Withdraw from Goal'),
@@ -115,8 +118,7 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   }
 
   void _handleDeleteGoal() {
-    // Implement delete goal logic
-    showDialog(
+    showDialog<void>(  // Explicitly type dialog return
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Goal'),
@@ -156,13 +158,12 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
                   children: [
                     Icon(Icons.account_balance_wallet, size: 24),
                     SizedBox(width: 10),
-                    Text('Available Amount',
-                        style: TextStyle(fontSize: 18)),
+                    Text('Available Amount', style: TextStyle(fontSize: 18)),
                   ],
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '${amount.toStringAsFixed(2)}',
+                  '\${amount.toStringAsFixed(2)}',
                   style: Theme.of(context)
                       .textTheme
                       .headlineMedium
@@ -179,7 +180,7 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   }
 
   Widget _buildCategoryDetails() {
-    final percentage = (progressPercentage * 100).toInt();
+    final percentage = (_calculateProgress() * 100).toInt();
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -255,18 +256,19 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   }
 
   Widget _buildCircularProgress(int percentage) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Stack(
+    return ValueListenableBuilder<double>(
+      valueListenable: _progressNotifier,
+      builder: (context, progress, _) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Stack(
             alignment: Alignment.center,
             children: [
               SizedBox(
                 height: 150,
                 width: 150,
                 child: CircularProgressIndicator(
-                  value: progressPercentage,
+                  value: progress,
                   strokeWidth: 10,
                   backgroundColor: Colors.grey.shade300,
                   color: Colors.blue,
@@ -290,8 +292,8 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -383,6 +385,12 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _progressNotifier.dispose();
+    super.dispose();
   }
 
   @override

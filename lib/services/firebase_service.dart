@@ -38,10 +38,10 @@ class FirebaseService {
   }
 
   // ========== CATEGORIES COLLECTION ==========
-  Future<void> addCategory(Map<String, dynamic> data) async {
-    if (currentUserId == null) return;
+  Future<DocumentReference> addCategory(Map<String, dynamic> data) async {
+    if (currentUserId == null) throw Exception('User not logged in');
     try {
-      await _firestore
+      DocumentReference docRef = await _firestore
           .collection('users')
           .doc(currentUserId)
           .collection('categories')
@@ -49,21 +49,20 @@ class FirebaseService {
         ...data,
         'createdAt': FieldValue.serverTimestamp(),
       });
+      return docRef;
     } catch (e) {
       throw Exception('Failed to add category: $e');
     }
   }
 
-  Stream<QuerySnapshot> getUserCategories() {
+  Query getUserCategories() {
     if (currentUserId == null) {
       throw Exception('User not logged in');
     }
     return _firestore
         .collection('users')
         .doc(currentUserId)
-        .collection('categories')
-        .orderBy('createdAt', descending: true)
-        .snapshots();
+        .collection('categories');
   }
 
   // Featured Goals Collection Operations
@@ -75,6 +74,39 @@ class FirebaseService {
         print('Error fetching featured goals: $e');
       }
       rethrow;
+    }
+  }
+
+  /// Updates a category document by ID
+  Future<void> updateCategory(
+      String categoryId, Map<String, dynamic> data) async {
+    if (currentUserId == null) throw Exception('User not logged in');
+
+    try {
+      await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('categories')
+          .doc(categoryId)
+          .update(data);
+    } catch (e) {
+      throw Exception('Failed to update category: $e');
+    }
+  }
+
+  /// Deletes a category document by ID
+  Future<void> deleteCategory(String categoryId) async {
+    if (currentUserId == null) throw Exception('User not logged in');
+
+    try {
+      await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('categories')
+          .doc(categoryId)
+          .delete();
+    } catch (e) {
+      throw Exception('Failed to delete category: $e');
     }
   }
 }

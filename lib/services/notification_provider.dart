@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:budgetbuddy_app/data models/notification_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'base_provider.dart';
 
-class NotificationProvider extends ChangeNotifier {
+class NotificationProvider extends BaseProvider {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -132,5 +133,10 @@ class NotificationProvider extends ChangeNotifier {
 
   void _updateUnreadCount() {
     _unreadCount = _notifications.where((n) => !n.isRead).length;
+  }
+
+  @override
+  Future<void> initialize() async {
+    await fetchNotifications();
   }
 }
