@@ -13,10 +13,10 @@ class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
 
   @override
-  _CategoriesPageState createState() => _CategoriesPageState();
+  CategoriesPageState createState() => CategoriesPageState();
 }
 
-class _CategoriesPageState extends State<CategoriesPage> {
+class CategoriesPageState extends State<CategoriesPage> {
   bool _isLoading = true;
   String? _error;
 

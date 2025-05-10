@@ -65,9 +65,17 @@ class AnalyticsProvider extends BaseProvider {
 
   // Fetch total savings
   Future<void> fetchTotalSavings() async {
+    final cached = getCached<double>('analytics', 'totalSavings');
+    if (cached != null) {
+      _totalSavings = cached;
+      return;
+    }
+
     _setLoading(true);
     try {
       _totalSavings = await _reportsService.getTotalSavings();
+      cache('analytics', 'totalSavings', _totalSavings,
+          ttl: const Duration(minutes: 15));
       _error = '';
     } catch (e) {
       _error = 'Failed to load total savings: ${e.toString()}';
@@ -78,9 +86,18 @@ class AnalyticsProvider extends BaseProvider {
 
   // Fetch category breakdown
   Future<void> fetchCategoryBreakdown() async {
+    final cached =
+        getCached<List<Map<String, dynamic>>>('analytics', 'categoryBreakdown');
+    if (cached != null) {
+      _categoryBreakdown = cached;
+      return;
+    }
+
     _setLoading(true);
     try {
       _categoryBreakdown = await _reportsService.getCategoryBreakdown();
+      cache('analytics', 'categoryBreakdown', _categoryBreakdown,
+          ttl: const Duration(minutes: 30));
       _error = '';
     } catch (e) {
       _error = 'Failed to load category breakdown: ${e.toString()}';

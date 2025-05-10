@@ -15,46 +15,46 @@ class HomePage extends StatelessWidget {
       builder: (context, authRepo, categoryProvider, _) {
         return Scaffold(
           appBar: UserAppbar(name: authRepo.userName),
-          body:SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20),
-                        const BalanceAndCategories(),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'My Budget Categories',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Appcolors.textBlueAccent),
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.arrow_forward,
-                                color: Appcolors.buttonBlue,
-                              ),
-                              onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CategoriesPage()),
-                              ), // Refresh after returning
-                            ),
-                          ],
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  const BalanceAndCategories(),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'My Budget Categories',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Appcolors.textBlueAccent),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_forward,
+                          color: Appcolors.buttonBlue,
                         ),
-                        const SizedBox(height: 10),
-                        const CategoryList(),
-                        const SizedBox(height: 20),
-                        const TransactionView(),
-                      ],
-                    ),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CategoriesPage()),
+                        ), // Refresh after returning
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  const CategoryList(),
+                  const SizedBox(height: 20),
+                  const TransactionView(),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );

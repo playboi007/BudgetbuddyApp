@@ -15,7 +15,7 @@ class BottomNavigation extends StatefulWidget {
 
 class BottomNavigationState extends State<BottomNavigation>
     with AutomaticKeepAliveClientMixin {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   late final List<Widget> _pages;
 
   @override

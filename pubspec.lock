@@ -262,6 +262,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.1"
+  flutter_extend:
+    dependency: "direct main"
+    description:
+      name: flutter_extend
+      sha256: c33f20eb336ad227ecee416b5ff393b6e00c08eb236e6eae89ea3d3bb369c4bb
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   flutter_lints:
     dependency: "direct dev"
     description:

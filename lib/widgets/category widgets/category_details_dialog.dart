@@ -22,6 +22,14 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   late bool isSavingsCategory;
   late final ValueNotifier<double> _progressNotifier;
 
+  // Cache expensive calculations
+  static final Map<String, double> _progressCache = {};
+
+  // Cache expensive UI elements
+  late final _appBar = RepaintBoundary(
+    child: AppBar(title: Text(widget.category.name)),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -32,12 +40,16 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   }
 
   double _calculateProgress() {
-    if (!isSavingsCategory || goalAmount == null || goalAmount == 0) return 0;
-    return amount / goalAmount!;
+    final key = '${widget.category.id}-$amount-$goalAmount';
+    return _progressCache.putIfAbsent(key, () {
+      if (!isSavingsCategory || goalAmount == null || goalAmount == 0) return 0;
+      return amount / goalAmount!;
+    });
   }
 
   void _handleSave() {
-    showDialog<void>(  // Explicitly type dialog return
+    showDialog<void>(
+      // Explicitly type dialog return
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
@@ -79,7 +91,8 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   }
 
   void _handleWithdraw() {
-    showDialog<void>(  // Explicitly type dialog return
+    showDialog<void>(
+      // Explicitly type dialog return
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Withdraw from Goal'),
@@ -118,7 +131,8 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   }
 
   void _handleDeleteGoal() {
-    showDialog<void>(  // Explicitly type dialog return
+    showDialog<void>(
+      // Explicitly type dialog return
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Goal'),
@@ -390,40 +404,44 @@ class _CategoryDetailsDialogState extends State<CategoryDetailsDialog> {
   @override
   void dispose() {
     _progressNotifier.dispose();
+    _progressCache.clear();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.category.name),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: _appBar,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Hero(
-              tag: widget.heroTag,
-              child: Center(
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  child: Text(
-                    widget.category.name.substring(0, 1),
-                    style: const TextStyle(fontSize: 36),
+      body: RepaintBoundary(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Hero(
+                tag: widget.heroTag,
+                child: Center(
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    child: Text(
+                      widget.category.name.substring(0, 1),
+                      style: const TextStyle(fontSize: 36),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            isSavingsCategory
-                ? _buildCategoryDetails()
-                : _buildFreeCategoryDetails(),
-          ],
+              const SizedBox(height: 30),
+              isSavingsCategory
+                  ? _buildCategoryDetails()
+                  : _buildFreeCategoryDetails(),
+            ],
+          ),
         ),
       ),
     );
