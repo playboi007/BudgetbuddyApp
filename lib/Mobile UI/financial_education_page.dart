@@ -1,6 +1,7 @@
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import '../services/course_provider.dart';
 import '../data models/course_model.dart';
@@ -12,17 +13,16 @@ class FinancialEducationPage extends StatefulWidget {
   const FinancialEducationPage({super.key});
 
   @override
-  _FinancialEducationPageState createState() => _FinancialEducationPageState();
+  FinancialEducationPageState createState() => FinancialEducationPageState();
 }
 
-class _FinancialEducationPageState extends State<FinancialEducationPage> {
+class FinancialEducationPageState extends State<FinancialEducationPage> {
   @override
   void initState() {
     super.initState();
     // Fetch courses when the page is initialized
-    if (!mounted) return;
     Future.microtask(() =>
-        Provider.of<CourseProvider>(context, listen: false).fetchCourses());
+        GetIt.I<CourseProvider>().loadCourses());
   }
 
   @override

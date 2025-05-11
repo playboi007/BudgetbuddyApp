@@ -1,306 +1,180 @@
+import 'package:budgetbuddy_app/data%20models/course_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../data models/course_model.dart';
+import 'package:flutter/foundation.dart';
+import 'package:budgetbuddy_app/services/firebase_service.dart';
 import 'base_provider.dart';
 
 class CourseProvider extends BaseProvider {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final CourseProvider _instance = CourseProvider._internal();
+  factory CourseProvider() => _instance;
+  CourseProvider._internal();
 
-  List<Course> _courses = [];
+  final FirebaseService _firebaseService = FirebaseService();
   bool _isLoading = false;
   String? _error;
-  Course? _currentCourse;
+  List<Course> _courses = [];
+  Map<String, Map<String, dynamic>> _courseProgress = {};
   Lesson? _currentLesson;
+  Course? _currentCourse;
 
-  // Getters
-  List<Course> get courses => _courses;
+  @override
   bool get isLoading => _isLoading;
+  @override
   String? get error => _error;
-  Course? get currentCourse => _currentCourse;
+  List<Course> get courses => _courses;
+  Map<String, Map<String, dynamic>> get courseProgress => _courseProgress;
   Lesson? get currentLesson => _currentLesson;
+  Course? get currentCourse => _currentCourse;
 
-  // Fetch all courses
-  Future<void> fetchCourses() async {
-    if (_auth.currentUser == null) return;
+  @override
+  Future<void> initialize() async {
+    await loadCourses();
+  }
+
+  Future<void> loadCourses() async {
+    if (_isLoading) return;
+    _setLoading(true);
 
     try {
-      _isLoading = true;
-      _error = null;
-      notifyListeners();
-
-      final userId = _auth.currentUser!.uid;
-      final coursesSnapshot = await _firestore.collection('courses').get();
-
-      final List<Course> loadedCourses = [];
-
-      for (var courseDoc in coursesSnapshot.docs) {
-        // Get user progress for this course
-        final userProgressDoc = await _firestore
-            .collection('users')
-            .doc(userId)
-            .collection('courseProgress')
-            .doc(courseDoc.id)
-            .get();
-
-        // Gets lessons for course
-        final lessonsSnapshot = await _firestore
-            .collection('courses')
-            .doc(courseDoc.id)
-            .collection('lessons')
-            .orderBy('order')
-            .get();
-
-        final List<Lesson> lessons = [];
-
-        for (var lessonDoc in lessonsSnapshot.docs) {
-          // Gets quizzes for lesson
-          final quizzesSnapshot = await _firestore
-              .collection('courses')
-              .doc(courseDoc.id)
-              .collection('lessons')
-              .doc(lessonDoc.id)
-              .collection('quizzes')
-              .get();
-
-          final List<Quiz> quizzes = quizzesSnapshot.docs
-              .map((quizDoc) => Quiz.fromFirestore(quizDoc.data(), quizDoc.id))
-              .toList();
-
-          // Check if lesson is completed in user progress
-          bool isLessonCompleted = false;
-          if (userProgressDoc.exists) {
-            final completedLessons = List<String>.from(
-                userProgressDoc.data()?['completedLessons'] ?? []);
-            isLessonCompleted = completedLessons.contains(lessonDoc.id);
-          }
-
-          // Create lesson with completion status
-          final lessonData = lessonDoc.data();
-          lessons.add(Lesson.fromFirestore(
-            {...lessonData, 'isCompleted': isLessonCompleted},
-            lessonDoc.id,
-            quizzes,
-          ));
-        }
-
-        int completedLessonsCount = lessons.where((l) => l.isCompleted).length;
-        double progress =
-            lessons.isEmpty ? 0.0 : completedLessonsCount / lessons.length;
-
-        final courseData = courseDoc.data();
-        loadedCourses.add(Course.fromFirestore(
-          {
-            ...courseData,
-            'completedLessons': completedLessonsCount,
-            'progress': progress,
-            'lastAccessedAt': (userProgressDoc.exists &&
-                    userProgressDoc.data()?['lastAccessedAt'] != null)
-                ? userProgressDoc.data()!['lastAccessedAt']
-                : DateTime.now(),
-          },
-          courseDoc.id,
-          lessons,
-        ));
+      // Check cache first
+      final cached = getCached<List<Course>>('courses', 'all');
+      if (cached != null) {
+        _courses = cached;
+        _setLoading(false);
+        notifyListeners();
+        return;
       }
 
-      _courses = loadedCourses;
-      _isLoading = false;
-      notifyListeners();
+      final coursesSnapshot = await _firebaseService.getCourses().get();
+      _courses = coursesSnapshot.docs
+          .map((doc) =>
+              Course.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+
+      // Cache courses with 15 minute TTL
+      cache('courses', 'all', _courses, ttl: const Duration(minutes: 15));
+
+      await _loadCourseProgress();
     } catch (e) {
-      _isLoading = false;
       _error = e.toString();
+      if (kDebugMode) {
+        print('Error loading courses: $e');
+      }
+    } finally {
+      _setLoading(false);
       notifyListeners();
     }
   }
 
-  // Set current course and update last accessed timestamp
-  Future<void> setCurrentCourse(Course course) async {
-    if (_auth.currentUser == null) return;
-
-    _currentCourse = course;
-    _currentLesson = null;
-    notifyListeners();
-
+  Future<void> _loadCourseProgress() async {
     try {
-      final userId = _auth.currentUser!.uid;
-      final timestamp = Timestamp.now();
+      // Check cache first
+      final cached =
+          getCached<Map<String, Map<String, dynamic>>>('courses', 'progress');
+      if (cached != null) {
+        _courseProgress = cached;
+        return;
+      }
 
-      // Update last accessed timestamp in user's course progress
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('courseProgress')
-          .doc(course.id)
-          .set({
-        'lastAccessedAt': timestamp,
-      }, SetOptions(merge: true));
+      final progressSnapshot = await _firebaseService.getCourseProgress().get();
 
-      // Update local course object
-      _currentCourse = _currentCourse!.copyWith(
-        lastAccessedAt: timestamp.toDate(),
+      _courseProgress = Map.fromEntries(
+        progressSnapshot.docs.map((doc) => MapEntry(
+              doc.id,
+              {
+                'completed':
+                    (doc.data() as Map<String, dynamic>)['completed'] ?? false,
+                'lastAccessed':
+                    (doc.data() as Map<String, dynamic>)['lastAccessed'],
+                'progress':
+                    (doc.data() as Map<String, dynamic>)['progress'] ?? 0.0,
+              },
+            )),
       );
 
-      // Update in courses list
-      final index = _courses.indexWhere((c) => c.id == course.id);
-      if (index != -1) {
-        _courses[index] = _currentCourse!;
-      }
-
-      notifyListeners();
+      // Cache progress with 5 minute TTL
+      cache('courses', 'progress', _courseProgress,
+          ttl: const Duration(minutes: 5));
     } catch (e) {
-      _error = e.toString();
-      notifyListeners();
+      if (kDebugMode) {
+        print('Error loading course progress: $e');
+      }
     }
   }
 
-  // Set current lesson
+  Future<void> updateCourseProgress(String courseId, double progress) async {
+    try {
+      await _firebaseService.updateCourseProgress(courseId, {
+        'progress': progress,
+        'lastAccessed': FieldValue.serverTimestamp(),
+        'completed': progress >= 1.0,
+      });
+
+      _courseProgress[courseId] = {
+        'progress': progress,
+        'lastAccessed': Timestamp.now(),
+        'completed': progress >= 1.0,
+      };
+
+      // Invalidate progress cache
+      clearCache('courses');
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      if (kDebugMode) {
+        print('Error updating course progress: $e');
+      }
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getCourseDetails(String courseId) async {
+    try {
+      // Check cache first
+      final cached =
+          getCached<Map<String, dynamic>>('courses', 'details_$courseId');
+      if (cached != null) return cached;
+
+      final courseDoc = await _firebaseService.getCourse(courseId).get();
+      if (!courseDoc.exists) return null;
+
+      final courseData = {
+        'id': courseDoc.id,
+        ...courseDoc.data() as Map<String, dynamic>,
+      };
+
+      // Cache course details with 15 minute TTL
+      cache('courses', 'details_$courseId', courseData,
+          ttl: const Duration(minutes: 15));
+
+      return courseData;
+    } catch (e) {
+      _error = e.toString();
+      return null;
+    }
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+  }
+
   void setCurrentLesson(Lesson lesson) {
     _currentLesson = lesson;
     notifyListeners();
   }
 
-  // Mark lesson as completed
-  Future<void> completeLesson(Lesson lesson) async {
-    if (_auth.currentUser == null || _currentCourse == null) return;
-
-    try {
-      final userId = _auth.currentUser!.uid;
-
-      // Update in Firestore
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('courseProgress')
-          .doc(_currentCourse!.id)
-          .set({
-        'completedLessons': FieldValue.arrayUnion([lesson.id]),
-      }, SetOptions(merge: true));
-
-      // Update local lesson
-      final updatedLesson = lesson.copyWith(isCompleted: true);
-
-      // Update in current course
-      if (_currentCourse != null) {
-        final lessonIndex =
-            _currentCourse!.lessons.indexWhere((l) => l.id == lesson.id);
-        if (lessonIndex != -1) {
-          final updatedLessons = List<Lesson>.from(_currentCourse!.lessons);
-          updatedLessons[lessonIndex] = updatedLesson;
-
-          // Calculate new progress
-          final completedCount =
-              updatedLessons.where((l) => l.isCompleted).length;
-          final progress = updatedLessons.isEmpty
-              ? 0.0
-              : completedCount / updatedLessons.length;
-
-          _currentCourse = _currentCourse!.copyWith(
-            lessons: updatedLessons,
-            completedLessons: completedCount,
-            progress: progress,
-          );
-
-          // Update in courses list
-          final courseIndex =
-              _courses.indexWhere((c) => c.id == _currentCourse!.id);
-          if (courseIndex != -1) {
-            _courses[courseIndex] = _currentCourse!;
-          }
-        }
-      }
-
-      // Update current lesson if it's the same
-      if (_currentLesson?.id == lesson.id) {
-        _currentLesson = updatedLesson;
-      }
-
-      notifyListeners();
-    } catch (e) {
-      _error = e.toString();
-      notifyListeners();
-    }
-  }
-
-  // Complete a quiz
-  Future<void> completeQuiz(Quiz quiz) async {
-    if (_auth.currentUser == null ||
-        _currentCourse == null ||
-        _currentLesson == null) {
-      return;
-    }
-
-    try {
-      final userId = _auth.currentUser!.uid;
-
-      // Update in Firestore
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('courseProgress')
-          .doc(_currentCourse!.id)
-          .collection('quizProgress')
-          .doc(quiz.id)
-          .set({
-        'isCompleted': true,
-        'completedAt': FieldValue.serverTimestamp(),
-      });
-
-      // Update local quiz
-      if (_currentLesson != null && _currentLesson!.quizzes != null) {
-        final quizIndex =
-            _currentLesson!.quizzes!.indexWhere((q) => q.id == quiz.id);
-        if (quizIndex != -1) {
-          final updatedQuizzes = List<Quiz>.from(_currentLesson!.quizzes!);
-          updatedQuizzes[quizIndex] = quiz.copyWith(isCompleted: true);
-
-          _currentLesson = _currentLesson!.copyWith(quizzes: updatedQuizzes);
-
-          // Update in current course
-          if (_currentCourse != null) {
-            final lessonIndex = _currentCourse!.lessons
-                .indexWhere((l) => l.id == _currentLesson!.id);
-            if (lessonIndex != -1) {
-              final updatedLessons = List<Lesson>.from(_currentCourse!.lessons);
-              updatedLessons[lessonIndex] = _currentLesson!;
-
-              _currentCourse =
-                  _currentCourse!.copyWith(lessons: updatedLessons);
-
-              // Update in courses list
-              final courseIndex =
-                  _courses.indexWhere((c) => c.id == _currentCourse!.id);
-              if (courseIndex != -1) {
-                _courses[courseIndex] = _currentCourse!;
-              }
-            }
-          }
-        }
-      }
-
-      notifyListeners();
-    } catch (e) {
-      _error = e.toString();
-      notifyListeners();
-    }
-  }
-
-  // Reset provider state
-  void reset() {
-    _courses = [];
-    _currentCourse = null;
-    _currentLesson = null;
-    _isLoading = false;
-    _error = null;
+  void setCurrentCourse(Course course) {
+    _currentCourse = course;
     notifyListeners();
   }
 
-  Future<void> loadCourses() async {
-    await fetchCourses();
+  void completeLesson(Lesson lesson) {
+    lesson.isCompleted = true;
+    notifyListeners();
   }
 
-  @override
-  Future<void> initialize() async {
-    await loadCourses();
+  void completeQuiz(Quiz quiz) {
+    quiz.isCompleted = true;
+    notifyListeners();
   }
 }

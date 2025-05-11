@@ -109,4 +109,41 @@ class FirebaseService {
       throw Exception('Failed to delete category: $e');
     }
   }
+
+  // ========== COURSES COLLECTION ==========
+  
+  /// Get all courses
+  CollectionReference getCourses() {
+    return _firestore.collection('courses');
+  }
+
+  /// Get specific course
+  DocumentReference getCourse(String courseId) {
+    return _firestore.collection('courses').doc(courseId);
+  }
+
+  /// Get user's course progress
+  CollectionReference getCourseProgress() {
+    if (currentUserId == null) throw Exception('User not logged in');
+    return _firestore
+        .collection('users')
+        .doc(currentUserId)
+        .collection('courseProgress');
+  }
+
+  /// Update course progress
+  Future<void> updateCourseProgress(String courseId, Map<String, dynamic> data) async {
+    if (currentUserId == null) throw Exception('User not logged in');
+    
+    try {
+      await _firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('courseProgress')
+          .doc(courseId)
+          .set(data, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception('Failed to update course progress: $e');
+    }
+  }
 }
