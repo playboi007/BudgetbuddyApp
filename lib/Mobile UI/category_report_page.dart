@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../states/analytics_provider.dart';
-import '../services/reports_service.dart';
+import '../repos/reports_service.dart';
 import '../widgets/charts/line_chart.dart';
 
 class CategoryReportPage extends StatefulWidget {

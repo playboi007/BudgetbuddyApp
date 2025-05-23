@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:budgetbuddy_app/Mobile UI/splash_screen.dart';
-import 'package:budgetbuddy_app/services/theme_provider.dart';
+import 'package:budgetbuddy_app/provider/theme_provider.dart';
 import 'package:budgetbuddy_app/utils/constants/colors.dart';
 import 'package:budgetbuddy_app/utils/constants/settings_strings.dart';
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';

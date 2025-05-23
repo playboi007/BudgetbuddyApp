@@ -1,26 +1,27 @@
 //this file is responsible for state management of reports
-import 'package:budgetbuddy_app/services/reports_service.dart';
+import 'package:budgetbuddy_app/repos/reports_service.dart';
 import 'package:intl/intl.dart';
-import '../services/base_provider.dart';
+import '../provider/base_provider.dart';
 
-class AnalyticsProvider extends BaseProvider {
+class AnalyticsProvider extends BaseCacheProvider {
   final ReportsService _reportsService = ReportsService();
 
   // State variables
-  bool _isLoading = false;
-  String _error = '';
   double _totalSavings = 0.0;
   List<Map<String, dynamic>> _categoryBreakdown = [];
   Map<String, Map<String, double>> _monthlySummary = {};
   List<Map<String, dynamic>> _savingsTrends = [];
+  @override
+  bool isLoading = false;
+  @override
+  String error = '';
+
 
   // Date range for reports
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 365));
   DateTime _endDate = DateTime.now();
 
   // Getters
-  bool get isLoading => _isLoading;
-  String get error => _error;
   double get totalSavings => _totalSavings;
   List<Map<String, dynamic>> get categoryBreakdown => _categoryBreakdown;
   Map<String, Map<String, double>> get monthlySummary => _monthlySummary;
@@ -44,9 +45,9 @@ class AnalyticsProvider extends BaseProvider {
         fetchMonthlySummary(),
         fetchSavingsTrends(),
       ]);
-      _error = '';
+      error = '';
     } catch (e) {
-      _error = 'Failed to load analytics: ${e.toString()}';
+      error = 'Failed to load analytics: ${e.toString()}';
     } finally {
       _setLoading(false);
     }
@@ -76,9 +77,9 @@ class AnalyticsProvider extends BaseProvider {
       _totalSavings = await _reportsService.getTotalSavings();
       cache('analytics', 'totalSavings', _totalSavings,
           ttl: const Duration(minutes: 15));
-      _error = '';
+      error = '';
     } catch (e) {
-      _error = 'Failed to load total savings: ${e.toString()}';
+      error = 'Failed to load total savings: ${e.toString()}';
     } finally {
       _setLoading(false);
     }
@@ -98,9 +99,9 @@ class AnalyticsProvider extends BaseProvider {
       _categoryBreakdown = await _reportsService.getCategoryBreakdown();
       cache('analytics', 'categoryBreakdown', _categoryBreakdown,
           ttl: const Duration(minutes: 30));
-      _error = '';
+      error = '';
     } catch (e) {
-      _error = 'Failed to load category breakdown: ${e.toString()}';
+      error = 'Failed to load category breakdown: ${e.toString()}';
     } finally {
       _setLoading(false);
     }
@@ -112,9 +113,9 @@ class AnalyticsProvider extends BaseProvider {
     try {
       _monthlySummary =
           await _reportsService.getMonthlySummary(_startDate, _endDate);
-      _error = '';
+      error = '';
     } catch (e) {
-      _error = 'Failed to load monthly summary: ${e.toString()}';
+      error = 'Failed to load monthly summary: ${e.toString()}';
     } finally {
       _setLoading(false);
     }
@@ -126,9 +127,9 @@ class AnalyticsProvider extends BaseProvider {
     try {
       _savingsTrends = await _reportsService
           .getSavingsTrends(_startDate, _endDate, categoryId: categoryId);
-      _error = '';
+      error = '';
     } catch (e) {
-      _error = 'Failed to load savings trends: ${e.toString()}';
+      error = 'Failed to load savings trends: ${e.toString()}';
     } finally {
       _setLoading(false);
     }
@@ -136,7 +137,7 @@ class AnalyticsProvider extends BaseProvider {
 
   // Helper to set loading state
   void _setLoading(bool loading) {
-    _isLoading = loading;
+    isLoading = loading;
     notifyListeners();
   }
 

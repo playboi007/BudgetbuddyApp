@@ -1,10 +1,10 @@
 import 'package:budgetbuddy_app/data%20models/course_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:budgetbuddy_app/services/firebase_service.dart';
+import 'package:budgetbuddy_app/repos/firebase_service.dart';
 import 'base_provider.dart';
 
-class CourseProvider extends BaseProvider {
+class CourseProvider extends BaseCacheProvider {
   static final CourseProvider _instance = CourseProvider._internal();
   factory CourseProvider() => _instance;
   CourseProvider._internal();
@@ -12,19 +12,13 @@ class CourseProvider extends BaseProvider {
   final FirebaseService _firebaseService = FirebaseService();
   bool _isLoading = false;
   String? _error;
-  List<Course> _courses = [];
+  List<Course> courses = [];
   Map<String, Map<String, dynamic>> _courseProgress = {};
-  Lesson? _currentLesson;
-  Course? _currentCourse;
+  Lesson? currentLesson;
+  Course? currentCourse;
 
   @override
-  bool get isLoading => _isLoading;
-  @override
   String? get error => _error;
-  List<Course> get courses => _courses;
-  Map<String, Map<String, dynamic>> get courseProgress => _courseProgress;
-  Lesson? get currentLesson => _currentLesson;
-  Course? get currentCourse => _currentCourse;
 
   @override
   Future<void> initialize() async {
@@ -39,20 +33,21 @@ class CourseProvider extends BaseProvider {
       // Check cache first
       final cached = getCached<List<Course>>('courses', 'all');
       if (cached != null) {
-        _courses = cached;
+        courses = cached;
         _setLoading(false);
         notifyListeners();
         return;
       }
 
       final coursesSnapshot = await _firebaseService.getCourses().get();
-      _courses = coursesSnapshot.docs
+      courses = coursesSnapshot.docs
           .map((doc) =>
               Course.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
+      
 
       // Cache courses with 15 minute TTL
-      cache('courses', 'all', _courses, ttl: const Duration(minutes: 15));
+      cache('courses', 'all', courses, ttl: const Duration(minutes: 15));
 
       await _loadCourseProgress();
     } catch (e) {
@@ -159,12 +154,12 @@ class CourseProvider extends BaseProvider {
   }
 
   void setCurrentLesson(Lesson lesson) {
-    _currentLesson = lesson;
+    currentLesson = lesson;
     notifyListeners();
   }
 
   void setCurrentCourse(Course course) {
-    _currentCourse = course;
+    currentCourse = course;
     notifyListeners();
   }
 

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import 'package:budgetbuddy_app/services/reports_service.dart';
+import 'package:budgetbuddy_app/repos/reports_service.dart';
 import 'package:budgetbuddy_app/utils/constants/colors.dart';
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 

@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:budgetbuddy_app/data models/notification_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'base_provider.dart';
 
-class NotificationProvider extends BaseProvider {
+class NotificationProvider extends BaseCacheProvider {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -13,9 +12,11 @@ class NotificationProvider extends BaseProvider {
   String? _error;
   int _unreadCount = 0;
 
-  List<NotificationModel> get notifications => _notifications;
+  @override
   bool get isLoading => _isLoading;
+  @override
   String? get error => _error;
+  List<NotificationModel> get notifications => _notifications;
   int get unreadCount => _unreadCount;
 
   Future<void> fetchNotifications() async {
@@ -25,6 +26,16 @@ class NotificationProvider extends BaseProvider {
       _isLoading = true;
       _error = null;
       notifyListeners();
+
+      // Try cache first
+      final cached = getCached<List<NotificationModel>>('notifications', 'all');
+      if (cached != null) {
+        _notifications = cached;
+        _updateUnreadCount();
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
 
       final userId = _auth.currentUser!.uid;
       final snapshot = await _firestore
@@ -38,8 +49,11 @@ class NotificationProvider extends BaseProvider {
           .map((doc) => NotificationModel.fromFirestore(doc.data(), doc.id))
           .toList();
 
-      _updateUnreadCount();
+      // Cache notifications with 5 minute TTL
+      cache('notifications', 'all', _notifications,
+          ttl: const Duration(minutes: 5));
 
+      _updateUnreadCount();
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -61,10 +75,12 @@ class NotificationProvider extends BaseProvider {
           .doc(notificationId)
           .update({'isRead': true});
 
-      // Update local state
+      // Update local state and cache
       final index = _notifications.indexWhere((n) => n.id == notificationId);
       if (index != -1) {
         _notifications[index] = _notifications[index].copyWith(isRead: true);
+        cache('notifications', 'all', _notifications,
+            ttl: const Duration(minutes: 5));
         _updateUnreadCount();
         notifyListeners();
       }
@@ -96,10 +112,13 @@ class NotificationProvider extends BaseProvider {
 
       await batch.commit();
 
-      // Update local state
+      // Update local state and cache
       _notifications = _notifications.map((notification) {
         return notification.copyWith(isRead: true);
       }).toList();
+
+      cache('notifications', 'all', _notifications,
+          ttl: const Duration(minutes: 5));
 
       _unreadCount = 0;
       notifyListeners();
@@ -121,8 +140,10 @@ class NotificationProvider extends BaseProvider {
           .doc(notificationId)
           .delete();
 
-      // Update local state
+      // Update local state and cache
       _notifications.removeWhere((n) => n.id == notificationId);
+      cache('notifications', 'all', _notifications,
+          ttl: const Duration(minutes: 5));
       _updateUnreadCount();
       notifyListeners();
     } catch (e) {

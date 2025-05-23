@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data models/course_model.dart';
-import '../services/course_provider.dart';
+import '../provider/course_provider.dart';
 import 'quiz_page.dart';
 
 class LessonPage extends StatelessWidget {

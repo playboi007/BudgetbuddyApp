@@ -1,5 +1,5 @@
-import 'package:budgetbuddy_app/repositories/auth_repo.dart';
-import 'package:budgetbuddy_app/services/category_provider.dart';
+import 'package:budgetbuddy_app/repos/auth_repo.dart';
+import 'package:budgetbuddy_app/provider/category_provider.dart';
 import 'package:flutter/material.dart';
 import 'categories_page.dart';
 import 'package:budgetbuddy_app/widgets/home_page_widgets/home_widgets.dart';

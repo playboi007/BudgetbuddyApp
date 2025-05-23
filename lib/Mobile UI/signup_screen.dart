@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:budgetbuddy_app/services/firebase_service.dart';
+import 'package:budgetbuddy_app/repos/firebase_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:budgetbuddy_app/utils/validators.dart';
 import 'package:budgetbuddy_app/utils/theme/text_theme.dart';

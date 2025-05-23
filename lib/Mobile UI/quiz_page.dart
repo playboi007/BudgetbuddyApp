@@ -3,7 +3,7 @@ import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data models/course_model.dart';
-import '../services/course_provider.dart';
+import '../provider/course_provider.dart';
 
 class QuizPage extends StatefulWidget {
   final Quiz quiz;

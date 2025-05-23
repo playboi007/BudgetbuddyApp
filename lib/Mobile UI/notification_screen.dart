@@ -1,7 +1,7 @@
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:budgetbuddy_app/services/notification_provider.dart';
+import 'package:budgetbuddy_app/provider/notification_provider.dart';
 import 'package:budgetbuddy_app/data models/notification_model.dart';
 import 'package:intl/intl.dart';
 

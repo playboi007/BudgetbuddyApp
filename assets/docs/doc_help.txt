@@ -1,0 +1,3000 @@
+//this file will help you underatsnd a github repo ive cloned to help me with the xml format of daraja API to RESTful format
+
+Directory structure:
+└── kn9ts-project-mulla/
+    ├── README.md
+    ├── environment.js
+    ├── gulpfile.js
+    ├── index.js
+    ├── LICENSE
+    ├── package.json
+    ├── Procfile
+    ├── .coveralls.yml
+    ├── .editorconfig
+    ├── .eslintrc
+    ├── .hound.yml
+    ├── .snyk
+    ├── docs/
+    │   ├── algorithmn.md
+    │   ├── Checkout.wsdl
+    │   ├── status-codes.md
+    │   ├── requests/
+    │   │   ├── 1-process-checkout.xml
+    │   │   └── 3-confirm-transaction.xml
+    │   ├── responses/
+    │   │   ├── 2-process-checkout-response.xml
+    │   │   ├── 4-transaction-confirmed.xml
+    │   │   └── 5-transaction-completed.xml
+    │   └── statuses/
+    │       ├── transaction-status-query.xml
+    │       └── transaction-status-response.xml
+    ├── server/
+    │   ├── config/
+    │   │   └── statusCodes.js
+    │   ├── controllers/
+    │   │   ├── ConfirmPayment.js
+    │   │   ├── PaymentRequest.js
+    │   │   ├── PaymentStatus.js
+    │   │   └── PaymentSuccess.js
+    │   ├── public/
+    │   │   └── css/
+    │   │       ├── style.css
+    │   │       └── style.less
+    │   ├── routes/
+    │   │   └── index.js
+    │   ├── utils/
+    │   │   ├── GenEncryptedPassword.js
+    │   │   ├── genTransactionPassword.js
+    │   │   ├── ParseResponse.js
+    │   │   ├── SOAPRequest.js
+    │   │   ├── ucFirst.js
+    │   │   └── errors/
+    │   │       └── responseError.js
+    │   ├── validators/
+    │   │   └── checkForRequiredParams.js
+    │   └── views/
+    │       ├── error.jade
+    │       ├── index.jade
+    │       └── layout.jade
+    └── test/
+        ├── environment.js
+        ├── controllers/
+        │   ├── ConfirmPayment.js
+        │   ├── PaymentRequest.js
+        │   ├── PaymentStatus.js
+        │   └── PaymentSuccess.js
+        ├── utils/
+        │   ├── genTransactionPassword.js
+        │   ├── ParseResponse.js
+        │   ├── SOAPRequest.js
+        │   ├── ucFirst.js
+        │   └── errors/
+        │       └── reponseError.js
+        └── validators/
+            └── checkForRequiredParams.js
+
+
+Files Content:
+
+================================================
+FILE: README.md
+================================================
+[![Coverage Status](https://coveralls.io/repos/github/kn9ts/project-mulla/badge.svg?branch=master)](https://coveralls.io/github/kn9ts/project-mulla?branch=master)
+[![Build Status](https://semaphoreci.com/api/v1/kn9ts/project-mulla/branches/master/badge.svg)](https://semaphoreci.com/kn9ts/project-mulla)
+
+![](http://res.cloudinary.com/dpmk2cnpi/image/upload/v1463934821/banner_vj7z5u.png)
+
+> __What MPESA G2 API should have been in the 21st century.__
+
+> __PLEASE NOTE: Mediates only C2B portion for now.__
+
+<p class="lead"><strong>Project Mulla is a MPESA API RESTful mediator</strong>. It lets you make familiar HTTP REST requests, <strong>transforming your requests</strong> to the fiddling dreaded SOAP/XML requests that the Safaricom MPESA G2 API only understands. It then communicates with the MPESA API gateway, transforming all SOAP responses from the SAG to <strong>RESTful JSON responses</strong> that you then consume effortlessly.</p>
+<blockquote>In short, it’ll deal with all of the SOAP shenanigans while you REST. Everybody wins!</blockquote>
+
+The aim of **Project Mulla** is to create a REST API middleman that interfaces with the **MPESA G2 API** for you.
+
+# Important: Update 23-06-2017
+
+When one now pings the endpoint `/payment/request` it initializes the payment and on response confirms the payment by also hitting the endpoint `payment/confirm` automatically
+
+This means you no longer have to make a second call to Project Mulla to confirm the payment thus hitting up the user's phone with the USSD prompt. One call to `payment/request` should handle this automatically.
+
+
+# Instructions
+
+## Request Payment
+
+This initial step is to tell the SAG to initialise a payment transaction for you. After
+initialisation, you then make another request to the SAG as a confirmation signaling the SAG to
+process the payment request.
+
+Assuming __Project Mulla__ is now your mediator, you'd now make a __POST__ request to
+__Project Mulla__. _Not the Safaricom Access Gateway_.
+
+See below how you'd make this initial request:
+
+### Initiate Payment Request:
+
+__`POST`__ __`https://project-mulla-companyname.herokuapp.com/api/v1/payment/request`__
+
+_Body Parameters_:
+
+- `phoneNumber` - The phone number of your client
+- `totalAmount` - The total amount you are charging the client
+- `referenceID` [optional] - The reference ID of the order or service
+- `merchantTransactionID` [optional] - This specific order's or service's transaction ID
+
+> __NOTE:__ If `merchantTransactionID` or `referenceID` are not provided a time-based and random
+UUID is generated for each respectively.
+
+### Sample request using CURL in the command line/terminal:
+
+```bash
+$ curl -i -X POST \
+--url http://project-mulla-companyname.herokuapp.com/api/v1/payment/request \
+--data 'phoneNumber=254723000000' \
+--data 'totalAmount=45.00' \
+--data 'clientName="Eugene Mutai"' \
+--data 'clientLocation=Kilimani' \
+```
+
+### Expected Response
+
+If all goes well you get HTTP status code __`200`__ accompanied with a similar structured JSON response:
+
+```json
+{
+  "response": {
+    "return_code": "00",
+    "status_code": 200,
+    "message": "Transaction carried successfully",
+    "trx_id": "453c70c4b2434bd94bcbafb17518dc8e",
+    "description": "success",
+    "cust_msg": "to complete this transaction, enter your bonga pin on your handset. if you don't have one dial *126*5# for instructions",
+    "reference_id": "3e3beff0-fc05-417a-bbf2-190ee19a5e58",
+    "merchant_transaction_id": "95d64500-2514-11e6-bcb8-a7f8e1c786c4",
+    "amount_in_double_float": "45.00",
+    "client_phone_number": "254723001575",
+    "extra_payload": {},
+    "time_stamp": "20160528234142"
+  }
+}
+```
+
+## Next step: confirmation
+
+You are to use `trx_id` or `merchant_transaction_id` to make the confirmation payment
+request. The confirmation request is to authorize the SAG to process the payment request. On confirmation, it
+triggers a pop up on your client's mobile phone to complete the payment.
+
+[Find the complete documentation here](http://kn9ts.github.io/project-mulla/docs)
+
+
+# Installation
+
+Installing Project Mulla is easy and straight-forward, but there are a few requirements you’ll need
+to make sure your system has before you start.
+
+## Requirements
+
+You will need to install some stuff, if they are not yet installed in your machine:
+
+* [Node.js (v4.3.2 or higher; LTS)](http://nodejs.org)
+* [NPM (v3.5+; bundled with node.js installation package)](https://docs.npmjs.com/getting-started/installing-node#updating-npm)
+
+If you've already installed the above you may need to only update **npm** to the latest version:
+
+```bash
+$ sudo npm update -g npm
+```
+
+---
+
+## Install through Github
+
+Best way to install Project Mulla is to clone it from Github
+
+**To clone/download the boilerplate**
+
+```bash
+$ git clone https://github.com/kn9ts/project-mulla.git
+```
+
+**After cloning, get into your cloned Project Mulla's directory/folder**
+
+```bash
+$ cd project-mulla
+```
+
+**Install all of the projects dependencies with:**
+
+```bash
+$ npm install
+```
+
+__Create `app.yaml` configurations file__
+
+The last but not the least step is to create a `app.yaml` file with your configurations in the root
+directory of `project-mulla`.
+
+This is the same folder directory where `index.js` can be found.
+
+Your `app.yaml` should look like the example below, only with your specific configuration values:
+
+```yaml
+env_variables:
+  PAYBILL_NUMBER: '898998'
+  PASSKEY: 'a8eac82d7ac1461ba0348b0cb24d3f8140d3afb9be864e56a10d7e8026eaed66'
+  MERCHANT_ENDPOINT: 'http://merchant-endpoint.com/mpesa/payment/complete'
+
+# Everything below is only relevant if you are looking
+# to deploy Project Mulla to Google App Engine.
+runtime: nodejs
+vm: true
+
+skip_files:
+  - ^(.*/)?.*/node_modules/.*$
+```
+
+*__NOTE:__ The `PAYBILL_NUMBER` and `PASSKEY` are provided by Safaricom once you have registered for the MPESA G2 API.*
+
+*__NOTE:__ The details above only serve as examples*
+
+# Testing
+
+## It's now ready to launch
+
+First run the command `npm test` on your terminal and see if everything is all good. Then run:
+
+```bash
+$ npm start
+
+> project-mulla@0.1.1 start ../project-mulla
+> node index.js
+
+Your secret session key is: 5f06b1f1-1bff-470d-8198-9ca2f18919c5
+Express server listening on 8080, in development mode
+```
+
+## Do a test run
+
+Now make a test run using **CURL**:
+
+```bash
+$ curl -i -X POST \
+  --url http://localhost:8080/api/v1/payment/request \
+  --data 'phoneNumber=254723000000' \
+  --data 'totalAmount=10.00' \
+  --data 'clientName="Eugene Mutai"' \
+  --data 'clientLocation=Kilimani' \
+```
+
+Or if you have [httpie](https://github.com/jkbrzt/httpie) installed:
+
+```bash
+$ http POST localhost:8080/api/v1/payment/request \
+  phoneNumber=254723000000 \
+  totalAmount=10.00 \
+  clientName='Eugene Mutai' \
+  clientLocation='Kilimani'
+```
+
+Once the request is executed, your console should print a similar structured **response** as below:
+
+```http
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 534
+Content-Type: application/json; charset=utf-8
+Date: Sun, 22 May 2016 13:12:09 GMT
+ETag: W/"216-NgmF2VWb0PIkUOKfya6WlA"
+X-Powered-By: Express
+set-cookie: connect.sid=s:iWfXH7rbAvXz7cYgmurhGTHDn0LNBmNt; Path=/; HttpOnly
+
+{
+  "response": {
+    "return_code": "00",
+    "status_code": 200,
+    "message": "Transaction carried successfully",
+    "trx_id": "453c70c4b2434bd94bcbafb17518dc8e",
+    "description": "success",
+    "cust_msg": "to complete this transaction, enter your bonga pin on your handset. if you don't have one dial *126*5# for instructions",
+    "reference_id": "3e3beff0-fc05-417a-bbf2-190ee19a5e58",
+    "merchant_transaction_id": "95d64500-2514-11e6-bcb8-a7f8e1c786c4",
+    "amount_in_double_float": "10.00",
+    "client_phone_number": "254723001575",
+    "extra_payload": {},
+    "time_stamp": "20160528234142"
+  }
+}
+```
+
+
+# This project uses GPLv3 LICENSE
+
+__TL;DR__ Here's what the license entails:
+
+```markdown
+1. Anyone can copy, modify and distribute this software.
+2. You have to include the license and copyright notice with each and every distribution.
+3. You can use this software privately.
+4. You can use this software for commercial purposes.
+5. If you dare build your business solely from this code, you risk open-sourcing the whole code base.
+6. If you modify it, you have to indicate changes made to the code.
+7. Any modifications of this code base MUST be distributed with the same license, GPLv3.
+8. This software is provided without warranty.
+9. The software author or license can not be held liable for any damages inflicted by the software.
+```
+
+More information on the [LICENSE can be found here](http://choosealicense.com/licenses/gpl-3.0/)
+
+*__DISCLAIMER:__* _All opinions aired in this repo are ours and do not reflect any company or organisation any contributor is involved with._
+
+
+
+================================================
+FILE: environment.js
+================================================
+'use strict';
+
+const fs = require('fs');
+const yaml = require('js-yaml');
+const uuid = require('node-uuid');
+
+const yamlConfigFile = 'app.yaml';
+
+// default configuration
+process.env.API_VERSION = 1;
+process.env.ENDPOINT = 'https://safaricom.co.ke/mpesa_online/lnmo_checkout_server.php?wsdl';
+process.env.SESSION_SECRET_KEY = uuid.v4();
+
+// if an env has not been provided, default to development
+if (!('NODE_ENV' in process.env)) process.env.NODE_ENV = 'development';
+
+if (process.env.NODE_ENV === 'development') {
+  const requiredEnvVariables = [
+    'PAYBILL_NUMBER',
+    'PASSKEY',
+    'MERCHANT_ENDPOINT',
+  ];
+  const envKeys = Object.keys(process.env);
+  const requiredEnvVariablesExist = requiredEnvVariables
+    .every(variable => envKeys.indexOf(variable) !== -1);
+
+  // if the requiredEnvVariables have not been added
+  // maybe by GAE or Heroku ENV settings
+  if (!requiredEnvVariablesExist) {
+    if (fs.existsSync(yamlConfigFile)) {
+      // Get the rest of the config from app.yaml config file
+      const config = yaml.safeLoad(fs.readFileSync(yamlConfigFile, 'utf8'));
+      Object.keys(config.env_variables).forEach(key => {
+        process.env[key] = config.env_variables[key];
+      });
+    } else {
+      throw new Error(`
+      Missing app.yaml config file used while in development mode
+
+      It should have contents similar to the example below:
+
+      app.yaml
+      -------------------------
+      env_variables:
+        PAYBILL_NUMBER: '000000'
+        PASSKEY: 'a8eac82d7ac1461ba0348b0cb24d3f8140d3afb9be864e56a10d7e8026eaed66'
+        MERCHANT_ENDPOINT: 'http://merchant-endpoint.com/mpesa/payment/complete'
+
+      # Everything below from this point onwards are only relevant
+      # if you are looking to deploy Project Mulla to Google App Engine.
+      runtime: nodejs
+      vm: true
+
+      skip_files:
+        - ^(.*/)?.*/node_modules/.*$
+      -------------------------
+    `);
+    }
+  }
+}
+
+
+
+================================================
+FILE: gulpfile.js
+================================================
+'use strict';
+
+require('./environment');
+const os = require('os');
+const gulp = require('gulp');
+const mocha = require('gulp-mocha');
+const istanbul = require('gulp-istanbul');
+const coveralls = require('gulp-coveralls');
+const eslint = require('gulp-eslint');
+const runSequence = require('run-sequence');
+
+if (!('COVERALLS_SERVICE_NAME' in process.env)) {
+  process.env.COVERALLS_SERVICE_NAME = `${os.hostname()}.${os.platform()}-${os.release()}`;
+}
+process.env.COVERALLS_REPO_TOKEN = 'EI2vRz1HRhJ3pGi7g3J6sMxI4dsnrWxtb';
+
+const filesToLint = [
+  'gulpfile.js',
+  'index.js',
+  'environment.js',
+  './server/**/*.js',
+  '!node_modules/**',
+];
+
+gulp.task('lint', () => gulp.src(filesToLint)
+  .pipe(eslint())
+  .pipe(eslint.format())
+  .pipe(eslint.failAfterError()));
+
+gulp.task('coverage', () => gulp
+  .src(['!node_modules/**', '!server/routes/**', './server/**/*.js'])
+  .pipe(istanbul({ includeUntested: true }))
+  .pipe(istanbul.hookRequire()));
+
+gulp.task('test:backend', () => gulp.src(['test/**/*.js'])
+  .pipe(mocha({ reporter: 'spec' }))
+  .once('error', err => {
+    throw err;
+  })
+  .pipe(istanbul.writeReports({
+    dir: './coverage',
+    reporters: ['html', 'lcov', 'text', 'json'],
+  })));
+
+gulp.task('coveralls', () => gulp.src('coverage/lcov.info').pipe(coveralls()));
+
+gulp.task('test', callback => {
+  runSequence('lint', 'coverage', 'test:backend', callback);
+});
+
+
+
+================================================
+FILE: index.js
+================================================
+'use strict';
+
+require('./environment');
+const express = require('express');
+const app = express();
+const path = require('path');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const routes = require('./server/routes');
+const genTransactionPassword = require('./server/utils/genTransactionPassword');
+const apiVersion = process.env.API_VERSION;
+
+// view engine setup
+app.set('views', path.join(__dirname, 'server/views'));
+app.set('view engine', 'jade');
+
+// trust proxy if it's being served in GoogleAppEngine
+if ('GAE_APPENGINE_HOSTNAME' in process.env) app.set('trust_proxy', 1);
+
+// Uncomment this for Morgan to intercept all Error instantiations
+// For now, they churned out via a JSON response
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, './server/public')));
+
+// memory based session
+app.use(session({
+  secret: process.env.SESSION_SECRET_KEY,
+  resave: false,
+  saveUninitialized: true,
+}));
+
+// on payment transaction requests,
+// generate and password to req object
+app.use(`/api/v${apiVersion}/payment*`, genTransactionPassword);
+
+// get an instance of the router for api routes
+const router = express.Router(); // eslint-disable-line new-cap
+app.use(`/api/v${apiVersion}`, routes(router));
+
+app.all('/*', (req, res) => {
+  res.render('index', { title: 'Project Mulla' });
+});
+
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.statusCode = 404;
+  next(err);
+});
+
+// error handlers
+app.use((err, req, res, next) => {
+  if (typeof err === 'undefined') next();
+  console.error('An error occured: ', err.message); // eslint-disable-line no-console
+  const errorResponse = {
+    status_code: err.statusCode,
+    request_url: req.originalUrl,
+    message: err.message,
+  };
+
+  // use this prettify the error stack string into an array of stack traces
+  const prettifyStackTrace = stackTrace => stackTrace.replace(/\s{2,}/g, ' ').trim();
+
+  // Only send back the error stack if it's on development mode
+  if (process.env.NODE_ENV === 'development') {
+    const stack = err.stack.split(/\n/).map(prettifyStackTrace);
+    errorResponse.stack_trace = stack;
+  }
+
+  return res.status(err.statusCode || 500).json();
+});
+
+const server = app.listen(process.env.PORT || 8080, () => {
+  console.log('Your secret session key is: ' + process.env.SESSION_SECRET_KEY); // eslint-disable-line no-console
+  console.log('Express server listening on %d, in %s mode', server.address().port, app.get('env')); // eslint-disable-line no-console
+});
+
+// expose app
+module.exports = app;
+
+
+
+================================================
+FILE: LICENSE
+================================================
+                   GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+
+  This version of the GNU Lesser General Public License incorporates
+the terms and conditions of version 3 of the GNU General Public
+License, supplemented by the additional permissions listed below.
+
+  0. Additional Definitions.
+
+  As used herein, "this License" refers to version 3 of the GNU Lesser
+General Public License, and the "GNU GPL" refers to version 3 of the GNU
+General Public License.
+
+  "The Library" refers to a covered work governed by this License,
+other than an Application or a Combined Work as defined below.
+
+  An "Application" is any work that makes use of an interface provided
+by the Library, but which is not otherwise based on the Library.
+Defining a subclass of a class defined by the Library is deemed a mode
+of using an interface provided by the Library.
+
+  A "Combined Work" is a work produced by combining or linking an
+Application with the Library.  The particular version of the Library
+with which the Combined Work was made is also called the "Linked
+Version".
+
+  The "Minimal Corresponding Source" for a Combined Work means the
+Corresponding Source for the Combined Work, excluding any source code
+for portions of the Combined Work that, considered in isolation, are
+based on the Application, and not on the Linked Version.
+
+  The "Corresponding Application Code" for a Combined Work means the
+object code and/or source code for the Application, including any data
+and utility programs needed for reproducing the Combined Work from the
+Application, but excluding the System Libraries of the Combined Work.
+
+  1. Exception to Section 3 of the GNU GPL.
+
+  You may convey a covered work under sections 3 and 4 of this License
+without being bound by section 3 of the GNU GPL.
+
+  2. Conveying Modified Versions.
+
+  If you modify a copy of the Library, and, in your modifications, a
+facility refers to a function or data to be supplied by an Application
+that uses the facility (other than as an argument passed when the
+facility is invoked), then you may convey a copy of the modified
+version:
+
+   a) under this License, provided that you make a good faith effort to
+   ensure that, in the event an Application does not supply the
+   function or data, the facility still operates, and performs
+   whatever part of its purpose remains meaningful, or
+
+   b) under the GNU GPL, with none of the additional permissions of
+   this License applicable to that copy.
+
+  3. Object Code Incorporating Material from Library Header Files.
+
+  The object code form of an Application may incorporate material from
+a header file that is part of the Library.  You may convey such object
+code under terms of your choice, provided that, if the incorporated
+material is not limited to numerical parameters, data structure
+layouts and accessors, or small macros, inline functions and templates
+(ten or fewer lines in length), you do both of the following:
+
+   a) Give prominent notice with each copy of the object code that the
+   Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the object code with a copy of the GNU GPL and this license
+   document.
+
+  4. Combined Works.
+
+  You may convey a Combined Work under terms of your choice that,
+taken together, effectively do not restrict modification of the
+portions of the Library contained in the Combined Work and reverse
+engineering for debugging such modifications, if you also do each of
+the following:
+
+   a) Give prominent notice with each copy of the Combined Work that
+   the Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the Combined Work with a copy of the GNU GPL and this license
+   document.
+
+   c) For a Combined Work that displays copyright notices during
+   execution, include the copyright notice for the Library among
+   these notices, as well as a reference directing the user to the
+   copies of the GNU GPL and this license document.
+
+   d) Do one of the following:
+
+       0) Convey the Minimal Corresponding Source under the terms of this
+       License, and the Corresponding Application Code in a form
+       suitable for, and under terms that permit, the user to
+       recombine or relink the Application with a modified version of
+       the Linked Version to produce a modified Combined Work, in the
+       manner specified by section 6 of the GNU GPL for conveying
+       Corresponding Source.
+
+       1) Use a suitable shared library mechanism for linking with the
+       Library.  A suitable mechanism is one that (a) uses at run time
+       a copy of the Library already present on the user's computer
+       system, and (b) will operate properly with a modified version
+       of the Library that is interface-compatible with the Linked
+       Version.
+
+   e) Provide Installation Information, but only if you would otherwise
+   be required to provide such information under section 6 of the
+   GNU GPL, and only to the extent that such information is
+   necessary to install and execute a modified version of the
+   Combined Work produced by recombining or relinking the
+   Application with a modified version of the Linked Version. (If
+   you use option 4d0, the Installation Information must accompany
+   the Minimal Corresponding Source and Corresponding Application
+   Code. If you use option 4d1, you must provide the Installation
+   Information in the manner specified by section 6 of the GNU GPL
+   for conveying Corresponding Source.)
+
+  5. Combined Libraries.
+
+  You may place library facilities that are a work based on the
+Library side by side in a single library together with other library
+facilities that are not Applications and are not covered by this
+License, and convey such a combined library under terms of your
+choice, if you do both of the following:
+
+   a) Accompany the combined library with a copy of the same work based
+   on the Library, uncombined with any other library facilities,
+   conveyed under the terms of this License.
+
+   b) Give prominent notice with the combined library that part of it
+   is a work based on the Library, and explaining where to find the
+   accompanying uncombined form of the same work.
+
+  6. Revised Versions of the GNU Lesser General Public License.
+
+  The Free Software Foundation may publish revised and/or new versions
+of the GNU Lesser General Public License from time to time. Such new
+versions will be similar in spirit to the present version, but may
+differ in detail to address new problems or concerns.
+
+  Each version is given a distinguishing version number. If the
+Library as you received it specifies that a certain numbered version
+of the GNU Lesser General Public License "or any later version"
+applies to it, you have the option of following the terms and
+conditions either of that published version or of any later version
+published by the Free Software Foundation. If the Library as you
+received it does not specify a version number of the GNU Lesser
+General Public License, you may choose any version of the GNU Lesser
+General Public License ever published by the Free Software Foundation.
+
+  If the Library as you received it specifies that a proxy can decide
+whether future versions of the GNU Lesser General Public License shall
+apply, that proxy's public statement of acceptance of any version is
+permanent authorization for you to choose that version for the
+Library.
+
+
+
+================================================
+FILE: package.json
+================================================
+{
+  "name": "project-mulla",
+  "version": "1.0.0",
+  "description": "Provides a REST interface for the Safaricom Mpesa SOAP API",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test",
+    "develop": "nodemon -w ./server -w index.js -w environment.js --exec npm start",
+    "lint": "eslint --fix ./server ./test",
+    "monitor": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kn9ts/project-mulla.git"
+  },
+  "author": "Eugene Mutai <eugenemutai@gmail.com> (http://twitter.com/kn9ts)",
+  "license": "GNU LESSER GENERAL PUBLIC LICENSE",
+  "bugs": {
+    "email": "eugenemutai@gmail.com",
+    "url": "https://github.com/kn9ts/project-mulla/issues"
+  },
+  "homepage": "https://github.com/kn9ts/project-mulla#readme",
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cheerio": "^0.20.0",
+    "cookie-parser": "~1.3.5",
+    "debug": "~2.6.7",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "jade": "~1.11.0",
+    "js-yaml": "^3.6.1",
+    "moment": "^2.13.0",
+    "morgan": "~1.8.2",
+    "node-uuid": "^1.4.7",
+    "request": "^2.72.0",
+    "serve-favicon": "~2.4.3",
+    "snyk": "^1.30.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^6.0.4",
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.9",
+    "eslint": "^2.10.2",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.8.0",
+    "eslint-plugin-jsx-a11y": "^1.2.2",
+    "eslint-plugin-react": "^5.1.1",
+    "gulp": "^3.9.1",
+    "gulp-coveralls": "^0.1.4",
+    "gulp-eslint": "^2.0.0",
+    "gulp-istanbul": "^0.10.4",
+    "gulp-mocha": "^2.2.0",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.5.2",
+    "nodemon": "^1.9.2",
+    "run-sequence": "^1.2.1",
+    "sinon": "^1.17.4"
+  },
+  "engines": {
+    "node": "^4.3.2",
+    "npm": "^3.9.5"
+  }
+}
+
+
+
+================================================
+FILE: Procfile
+================================================
+web: node index.js
+
+
+
+================================================
+FILE: .coveralls.yml
+================================================
+repo_token: EI2vRz1HRhJ3pGi7g3J6sMxI4dsnrWxtb
+
+
+
+================================================
+FILE: .editorconfig
+================================================
+# EditorConfig helps developers define and maintain consistent
+# coding styles between different editors and IDEs
+# editorconfig.org
+root = true
+
+[*]
+# Change these settings to your own preference
+indent_style = space
+indent_size = 2
+
+# We recommend you to keep these unchanged
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+# 4 space indentation
+[**.{json, htaccess}]
+indent_style = space
+indent_size = 4
+
+
+
+================================================
+FILE: .eslintrc
+================================================
+{
+    "env": {
+        "node": true,
+        "mocha": true
+    },
+    "extends": "airbnb",
+    "rules": {
+        "prefer-template": 0,
+        "prefer-rest-params": 0,
+        "strict": 0,
+        "no-unused-expressions": 0,
+        "no-param-reassign": 0,
+        "max-len": [
+            2,
+            100,
+            2,
+            {
+                "ignoreComments": true,
+                "ignoreUrls": true,
+                "ignorePattern": "\/(.*)\/;"
+            }
+        ]
+    }
+}
+
+
+
+================================================
+FILE: .hound.yml
+================================================
+eslint:
+  enabled: true
+  config_file: .eslintrc
+
+
+
+================================================
+FILE: .snyk
+================================================
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:uglify-js:20151024':
+    - jade > transformers > uglify-js:
+        patched: '2016-08-09T13:17:05.365Z'
+  'npm:ms:20170412':
+    - morgan > debug > ms:
+        patched: '2017-05-23T23:37:05.011Z'
+fix: package.json & .snyk to reduce vulnerabilities
+
+
+
+================================================
+FILE: docs/algorithmn.md
+================================================
+### SOAP extraction algorithm
+
+- Remove the XML header tag using `/\<\?[\w\s\=\.\-\'\"]+\?\>/gmi`
+- Extract envelope element tag using `/(\<([\w\-]+\:[\w\-]+\s)([\w\=\-\:\"\'\\\/\.]+\s?)+?\>)/gi`
+- Get the PREFIXES using this:
+
+  ```js
+  var re = (/((xmlns):[\w\-]+)+/gi || /(xmlns\:)([\w\-]+)/gi)
+  ```
+  They start with `xmlns:bla-bla`
+
+- Remove the `bla-bla:` from all elements in the SOAP tree
+- Remove all "xmlns:" from envelope header
+- Lowercase the SOAP string
+
+The response from SAG:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="tns:ns">
+    <SOAP-ENV:Body>
+        <ns1:processCheckOutResponse>
+            <RETURN_CODE>34</RETURN_CODE>
+            <DESCRIPTION>Failed. The system is experiencing delays. Please try again after 5 minutes.
+            </DESCRIPTION>
+            <TRX_ID/>
+            <ENC_PARAMS></ENC_PARAMS>
+            <CUST_MSG></CUST_MSG>
+        </ns1:processCheckOutResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+The response parsed into a HTML fragment:
+
+```html
+<envelope soap-env="http://schemas.xmlsoap.org/soap/envelope/" ns1="tns:ns">
+    <body>
+        <processcheckoutresponse>
+            <return_code>34</return_code>
+            <description>failed. the system is experiencing delays. please try again after 5 minutes.
+            </description>
+            <trx_id/>
+            <enc_params></enc_params>
+            <cust_msg></cust_msg>
+        </processcheckoutresponse>
+    </body>
+</envelope>
+```
+
+- Now we have a clean HTML-like tree
+- The `cheerio` HTML node.js parsing library can take over from here
+- We can then interpret the code sent back into a HTTP STATUS CODE.
+
+
+
+================================================
+FILE: docs/Checkout.wsdl
+================================================
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:s="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:tns="tns:ns"
+    targetNamespace="tns:ns">
+    <wsdl:types>
+        <s:schema targetNamespace="tns:ns">
+            <s:element name="CheckOutHeader">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="MERCHANT_ID" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="PASSWORD" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="TIMESTAMP" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="processCheckOutRequest">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="MERCHANT_TRANSACTION_ID" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="REFERENCE_ID" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="AMOUNT" type="s:double" />
+                        <s:element minOccurs="1" maxOccurs="1" name="MSISDN" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="ENC_PARAMS" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="CALL_BACK_URL" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="CALL_BACK_METHOD" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="TIMESTAMP" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="transactionStatusRequest">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="TRX_ID" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="MERCHANT_TRANSACTION_ID" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="processCheckOutResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" name="RETURN_CODE" type="s:string" />
+                        <s:element minOccurs="1" name="DESCRIPTION" type="s:string" />
+                        <s:element minOccurs="1" name="TRX_ID" type="s:string" />
+                        <s:element minOccurs="1" name="ENC_PARAMS" type="s:string" />
+                        <s:element minOccurs="1" name="CUST_MSG" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="transactionStatusResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" name="MSISDN" type="s:string" />
+                        <s:element minOccurs="1" name="AMOUNT" type="s:string" />
+                        <s:element minOccurs="1" name="MPESA_TRX_DATE" type="s:string" />
+                        <s:element minOccurs="1" name="MPESA_TRX_ID" type="s:string" />
+                        <s:element minOccurs="1" name="TRX_STATUS" type="s:string" />
+                        <s:element minOccurs="1" name="RETURN_CODE" type="s:string" />
+                        <s:element minOccurs="1" name="DESCRIPTION" type="s:string" />
+                        <s:element minOccurs="1" name="MERCHANT_TRANSACTION_ID" type="s:string" />
+                        <s:element minOccurs="1" name="ENC_PARAMS" type="s:string" />
+                        <s:element minOccurs="1" name="TRX_ID" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="transactionConfirmRequest">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="TRX_ID" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="MERCHANT_TRANSACTION_ID" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="transactionConfirmResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" name="RETURN_CODE" type="s:string" />
+                        <s:element minOccurs="1" name="DESCRIPTION" type="s:string" />
+                        <s:element minOccurs="1" name="MERCHANT_TRANSACTION_ID" type="s:string" />
+                        <s:element minOccurs="1" name="TRX_ID" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ResultMsg">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" name="MSISDN" type="s:string" />
+                        <s:element minOccurs="1" name="AMOUNT" type="s:string" />
+                        <s:element minOccurs="1" name="MPESA_TRX_DATE" type="s:string" />
+                        <s:element minOccurs="1" name="MPESA_TRX_ID" type="s:string" />
+                        <s:element minOccurs="1" name="TRX_STATUS" type="s:string" />
+                        <s:element minOccurs="1" name="RETURN_CODE" type="s:string" />
+                        <s:element minOccurs="1" name="DESCRIPTION" type="s:string" />
+                        <s:element minOccurs="1" name="MERCHANT_TRANSACTION_ID" type="s:string" />
+                        <s:element minOccurs="1" name="ENC_PARAMS" type="s:string" />
+                        <s:element minOccurs="1" name="TRX_ID" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ResponseMsg" type="s:string" />
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="mpesaCheckOutRequest">
+        <wsdl:part name="body" element="tns:processCheckOutRequest" />
+    </wsdl:message>
+    <wsdl:message name="mpesaCheckOutHeader">
+        <wsdl:part name="header" element="tns:CheckOutHeader" />
+    </wsdl:message>
+    <wsdl:message name="mpesaCheckOutResponse">
+        <wsdl:part name="parameters" element="tns:processCheckOutResponse" />
+    </wsdl:message>
+    <wsdl:message name="mpesaTransactionRequest">
+        <wsdl:part name="body" element="tns:transactionStatusRequest" />
+    </wsdl:message>
+    <wsdl:message name="mpesaTransactionResponse">
+        <wsdl:part name="parameters" element="tns:transactionStatusResponse" />
+    </wsdl:message>
+    <wsdl:message name="mpesaConfirmRequest">
+        <wsdl:part name="parameters" element="tns:transactionConfirmRequest" />
+    </wsdl:message>
+    <wsdl:message name="mpesaConfirmResponse">
+        <wsdl:part name="parameters" element="tns:transactionConfirmResponse" />
+    </wsdl:message>
+    <wsdl:message name="ResultMessage">
+        <wsdl:part name="ResultMsg" element="tns:ResultMsg">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="ResponseMessage">
+        <wsdl:part name="ResponseMsg" element="tns:ResponseMsg">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="LNMO_portType">
+        <wsdl:operation name="processCheckOut">
+            <wsdl:input message="tns:mpesaCheckOutRequest" />
+            <wsdl:output message="tns:mpesaCheckOutResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="transactionStatusQuery">
+            <wsdl:input message="tns:mpesaTransactionRequest" />
+            <wsdl:output message="tns:mpesaTransactionResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="confirmTransaction">
+            <wsdl:input message="tns:mpesaConfirmRequest" />
+            <wsdl:output message="tns:mpesaConfirmResponse" />
+        </wsdl:operation>
+        <wsdl:operation name="LNMOResult">
+            <wsdl:input message="tns:ResultMessage">
+            </wsdl:input>
+            <wsdl:output message="tns:ResponseMessage">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="LNMO_binding" type="tns:LNMO_portType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="processCheckOut">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap:header message="tns:mpesaCheckOutHeader" part="header" use="literal" />
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="transactionStatusQuery">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap:header message="tns:mpesaCheckOutHeader" part="header" use="literal" />
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="confirmTransaction">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap:header message="tns:mpesaCheckOutHeader" part="header" use="literal" />
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="LNMOResult">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="lnmo_checkout_Service">
+        <wsdl:port name="lnmo_checkout" binding="tns:LNMO_binding">
+            <soap:address location="lnmo_checkout_server.php" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
+
+
+
+================================================
+FILE: docs/status-codes.md
+================================================
+## HTTP STATUS CODE, RETURN CODE, CODE TYPE, DESCRIPTION
+
+### 2xx - Successful
+
+##### Successful 
+
+- __`[200]`__ => `00` => The Request has been successfully received or the transaction has successfully completed.
+
+---
+
+### 4xx - Client Error
+
+##### Bad requests(incorrect/missing detials) 
+
+- __`[400]`__ => `09` => The store number specified in the transaction could not be found. This happens if the Merchant Pay bill number was incorrectly captured during registration.
+- __`[400]`__ => `10` => This occurs when the system is unable to resolve the credit account i.e the MSISDN provided isn’t registered on M-PESA
+- __`[400]`__ => `30` => Returned when the request is missing reference ID
+- __`[400]`__ => `31` => Returned when the request amount is Invalid or blank
+- __`[400]`__ => `36` => Response given if incorrect credentials are provided in the request (incorrent merchant info)
+- __`[400]`__ => `40` => Missing parameters
+- __`[400]`__ => `41` => MSISDN(phone no.) is in incorrect format
+
+##### Unauthorised 
+
+- __`[401]`__ => `32` => Returned when the account in the request hasn’t been activated. (unactivated)
+- __`[401]`__ => `33` => Returned when the account hasn’t been approved to transact. (unapproved to transact)
+
+##### Payment required, details are ok, but still fails 
+
+- __`[402]`__ => `01` => Insufficient Funds on MSISDN account
+- __`[402]`__ => `03` => Amount less than the minimum single transfer allowed on the system.
+- __`[402]`__ => `04` => Amount more than the maximum single transfer amount allowed.
+- __`[402]`__ => `08` => Balance would rise above the allowed maximum amount. This happens if the MSISDN has reached its maximum transaction limit for the day.
+
+##### Conflict found 
+
+- __`[409]`__ => `35` => Response when a duplicate request is detected.
+- __`[409]`__ => `12` => Message returned when the transaction details are different from original captured request details.
+
+---
+
+### 5xx - Server Error
+
+##### Service Unavailable
+
+- __`[503]`__ => `06` => Transaction could not be confirmed possibly due to confirm operation failure.
+- __`[503]`__ => `11` => This message is returned when the system is unable to complete the transaction.
+- __`[503]`__ => `34` => Returned when there is a request processing delay.
+- __`[503]`__ => `29` => System Downtime message when the system is inaccessible.
+
+##### Gateway Timeout 
+
+- __`[504]`__ => `05` => Transaction expired in the instance where it wasn’t picked in time for processing.
+
+
+
+================================================
+FILE: docs/requests/1-process-checkout.xml
+================================================
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="tns:ns">
+    <soapenv:Header>
+        <tns:CheckOutHeader>
+            <MERCHANT_ID>898945</MERCHANT_ID>
+            <PASSWORD>MmRmNTliMjIzNjJhNmI5ODVhZGU5OTAxYWQ4NDJkZmI2MWE4ODg1ODFhMTQ3ZmZmNTFjMjg4M2UyYWQ5NTU3Yw==</PASSWORD>
+            <TIMESTAMP>20141128174717</TIMESTAMP>
+        </tns:CheckOutHeader>
+    </soapenv:Header>
+    <soapenv:Body>
+        <tns:processCheckOutRequest>
+            <MERCHANT_TRANSACTION_ID>911-000</MERCHANT_TRANSACTION_ID>
+            <REFERENCE_ID>1112254500</REFERENCE_ID>
+            <AMOUNT>54</AMOUNT>
+            <MSISDN>2547204871865</MSISDN>
+            <ENC_PARAMS></ENC_PARAMS>
+            <CALL_BACK_URL>http://172.21.20.215:8080/test</CALL_BACK_URL>
+            <CALL_BACK_METHOD>xml</CALL_BACK_METHOD>
+            <TIMESTAMP>20141128174717</TIMESTAMP>
+        </tns:processCheckOutRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+
+================================================
+FILE: docs/requests/3-confirm-transaction.xml
+================================================
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="tns:ns">
+    <soapenv:Header>
+        <tns:CheckOutHeader>
+            <MERCHANT_ID>898945</MERCHANT_ID>
+            <PASSWORD>MmRmNTliMjIzNjJhNmI5ODVhZGU5OTAxYWQ4NDJkZmI2MWE4ODg1ODFhMTQ3ZmZmNTFjMjg4M2UyYWQ5NTU3Yw==</PASSWORD>
+            <TIMESTAMP>20141128174717</TIMESTAMP>
+        </tns:CheckOutHeader>
+    </soapenv:Header>
+    <soapenv:Body>
+        <tns:transactionConfirmRequest>
+            <!--Optional:-->
+            <TRX_ID>243809842908</TRX_ID>
+            <!--Optional:-->
+            <MERCHANT_TRANSACTION_ID>911-000</MERCHANT_TRANSACTION_ID>
+        </tns:transactionConfirmRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+
+================================================
+FILE: docs/responses/2-process-checkout-response.xml
+================================================
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="tns:ns">
+    <SOAP-ENV:Body>
+        <ns1:processCheckOutResponse>
+            <RETURN_CODE>00</RETURN_CODE>
+            <DESCRIPTION>Success</DESCRIPTION>
+            <TRX_ID>cce3d32e0159c1e62a9ec45b67676200</TRX_ID>
+            <ENC_PARAMS></ENC_PARAMS>
+            <CUST_MSG>To complete this transaction, enter your Bonga PIN on your handset. if you don't have one dial *126*5# for instructions</CUST_MSG>
+        </ns1:processCheckOutResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+
+
+================================================
+FILE: docs/responses/4-transaction-confirmed.xml
+================================================
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="tns:ns">
+    <SOAP-ENV:Body>
+        <ns1:transactionConfirmResponse>
+            <RETURN_CODE>00</RETURN_CODE>
+            <DESCRIPTION>Success</DESCRIPTION>
+            <MERCHANT_TRANSACTION_ID></MERCHANT_TRANSACTION_ID>
+            <TRX_ID>5f6af12be0800c4ffabb4cf2608f0808</TRX_ID>
+        </ns1:transactionConfirmResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+
+
+================================================
+FILE: docs/responses/5-transaction-completed.xml
+================================================
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="tns:ns">
+    <SOAP-ENV:Body>
+        <ns1:ResultMsg>
+            <MSISDN ns1:type="xsd:string">254720471865</MSISDN>
+            <AMOUNT ns1:type="xsd:string">54.0</AMOUNT>
+            <M-PESA_TRX_DATE ns1:type="xsd:string">2014-12-01 16:24:06</M-PESA_TRX_DATE>
+            <M-PESA_TRX_ID ns1:type="xsd:string">null</M-PESA_TRX_ID>
+            <TRX_STATUS ns1:type="xsd:string">Success</TRX_STATUS>
+            <RETURN_CODE ns1:type="xsd:string">00</RETURN_CODE>
+            <DESCRIPTION ns1:type="xsd:string">Success</DESCRIPTION>
+            <MERCHANT_TRANSACTION_ID ns1:type="xsd:string">911-000</MERCHANT_TRANSACTION_ID>
+            <ENC_PARAMS ns1:type="xsd:string"></ENC_PARAMS>
+            <TRX_ID ns1:type="xsd:string">cce3d32e0159c1e62a9ec45b67676200</TRX_ID>
+        </ns1:ResultMsg>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+
+
+================================================
+FILE: docs/statuses/transaction-status-query.xml
+================================================
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="tns:ns">
+    <soapenv:Header>
+        <tns:CheckOutHeader>
+            <MERCHANT_ID>898945</MERCHANT_ID>
+            <PASSWORD>MmRmNTliMjIzNjJhNmI5ODVhZGU5OTAxYWQ4NDJkZmI2MWE4ODg1ODFhMTQ3ZmZmNTFjMjg4M2UyYWQ5NTU3Yw==</PASSWORD>
+            <TIMESTAMP>20141128174717</TIMESTAMP>
+        </tns:CheckOutHeader>
+    </soapenv:Header>
+    <soapenv:Body>
+        <tns:transactionStatusRequest>
+            <TRX_ID>ddd396509b168297141a747cd2dc1748</TRX_ID>
+            <MERCHANT_TRANSACTION_ID>911-100</MERCHANT_TRANSACTION_ID>
+        </tns:transactionStatusRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+
+
+================================================
+FILE: docs/statuses/transaction-status-response.xml
+================================================
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="tns:ns">
+    <SOAP-ENV:Body>
+        <ns1:transactionStatusResponse>
+            <MSISDN>254720471865</MSISDN>
+            <AMOUNT>54000</AMOUNT>
+            <M-PESA_TRX_DATE>2014-12-01 16:59:07</M-PESA_TRX_DATE>
+            <M-PESA_TRX_ID>ddd396509b168297141a747cd2dc1748</M-PESA_TRX_ID>
+            <TRX_STATUS>Failed</TRX_STATUS>
+            <RETURN_CODE>01</RETURN_CODE>
+            <DESCRIPTION>InsufficientFunds</DESCRIPTION>
+            <MERCHANT_TRANSACTION_ID><MERCHANT_TRANSACTION_ID/>
+            <ENC_PARAMS></ENC_PARAMS>
+            <TRX_ID>ddd396509b168297141a747cd2dc1748</TRX_ID>
+        </ns1:transactionStatusResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+
+
+================================================
+FILE: server/config/statusCodes.js
+================================================
+'use strict';
+
+module.exports = [{
+  return_code: 0,
+  status_code: 200,
+  message: 'Transaction carried successfully',
+}, {
+  return_code: 9,
+  status_code: 400,
+  message: 'The merchant ID provided does not exist in our systems',
+}, {
+  return_code: 10,
+  status_code: 400,
+  message: 'The phone number(MSISDN) provided isn’t registered on M-PESA',
+}, {
+  return_code: 30,
+  status_code: 400,
+  message: 'Missing reference ID',
+}, {
+  return_code: 31,
+  status_code: 400,
+  message: 'The request amount is invalid or blank',
+}, {
+  return_code: 36,
+  status_code: 400,
+  message: 'Incorrect credentials are provided in the request',
+}, {
+  return_code: 40,
+  status_code: 400,
+  message: 'Missing required parameters',
+}, {
+  return_code: 41,
+  status_code: 400,
+  message: 'MSISDN(phone number) is in incorrect format',
+}, {
+  return_code: 42,
+  status_code: 400,
+  message: 'Your PASSKEY, PAYBILL_NUMBER or environment variables may be incorrect',
+}, {
+  return_code: 32,
+  status_code: 401,
+  message: 'The merchant/paybill account in the request hasn’t been activated',
+}, {
+  return_code: 33,
+  status_code: 401,
+  message: 'The merchant/paybill account hasn’t been approved to transact',
+}, {
+  return_code: 1,
+  status_code: 402,
+  message: 'Client has insufficient funds to complete the transaction',
+}, {
+  return_code: 3,
+  status_code: 402,
+  message: 'The amount to be transacted is less than the minimum single transfer amount allowed',
+}, {
+  return_code: 4,
+  status_code: 402,
+  message: 'The amount to be transacted is more than the maximum single transfer amount allowed',
+}, {
+  return_code: 8,
+  status_code: 402,
+  message: 'The client has reached his/her maximum transaction limit for the day',
+}, {
+  return_code: 35,
+  status_code: 409,
+  message: 'A duplicate request has been detected',
+}, {
+  return_code: 43,
+  status_code: 409,
+  message: 'Duplicate merchant transaction ID detected',
+}, {
+  return_code: 12,
+  status_code: 409,
+  message: 'The transaction details are different from original captured request details',
+}, {
+  return_code: 99,
+  status_code: 409,
+  message: 'There\'s no recorded transaction associated with the transaction ID provided',
+}, {
+  return_code: 6,
+  status_code: 503,
+  message: 'Transaction could not be confirmed possibly due to the operation failing',
+}, {
+  return_code: 11,
+  status_code: 503,
+  message: 'The system is unable to complete the transaction',
+}, {
+  return_code: 34,
+  status_code: 503,
+  message: 'A delay is being experienced while processing requests',
+}, {
+  return_code: 29,
+  status_code: 503,
+  message: 'The system is inaccessible; The system may be down',
+}, {
+  return_code: 5,
+  status_code: 504,
+  message: 'Duration provided to complete the transaction has expired',
+}];
+
+
+
+================================================
+FILE: server/controllers/ConfirmPayment.js
+================================================
+'use strict';
+
+const ParseResponse = require('../utils/ParseResponse');
+const SOAPRequest = require('../utils/SOAPRequest');
+
+const parseResponse = new ParseResponse('transactionconfirmresponse');
+const soapRequest = new SOAPRequest();
+
+class ConfirmPayment {
+  constructor(request, parser) {
+    this.parser = parser;
+    this.soapRequest = request;
+  }
+
+  buildSoapBody(data) {
+    const transactionConfirmRequest = typeof data.transactionID !== 'undefined' ?
+      '<TRX_ID>' + data.transactionID + '</TRX_ID>' :
+      '<MERCHANT_TRANSACTION_ID>' + data.merchantTransactionID + '</MERCHANT_TRANSACTION_ID>';
+
+    this.body = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="tns:ns">
+      <soapenv:Header>
+        <tns:CheckOutHeader>
+          <MERCHANT_ID>${process.env.PAYBILL_NUMBER}</MERCHANT_ID>
+          <PASSWORD>${data.encryptedPassword}</PASSWORD>
+          <TIMESTAMP>${data.timeStamp}</TIMESTAMP>
+        </tns:CheckOutHeader>
+      </soapenv:Header>
+      <soapenv:Body>
+        <tns:transactionConfirmRequest>
+          ${transactionConfirmRequest}
+        </tns:transactionConfirmRequest>
+      </soapenv:Body>
+    </soapenv:Envelope>`;
+
+    return this;
+  }
+
+  handler(params) {
+    const paymentDetails = {
+      transactionID: params.transactionID, // eg. '99d0b1c0237b70f3dc63f36232b9984c'
+      timeStamp: params.timeStamp,
+      encryptedPassword: params.encryptedPassword,
+    };
+    const payment = this.buildSoapBody(paymentDetails);
+    const confirm = this.soapRequest.construct(payment, this.parser);
+
+    // process ConfirmPayment response
+    return confirm.post();
+  }
+}
+
+module.exports = new ConfirmPayment(soapRequest, parseResponse);
+
+
+
+================================================
+FILE: server/controllers/PaymentRequest.js
+================================================
+'use strict';
+
+const uuid = require('node-uuid');
+
+const ConfirmPayment = require('../controllers/ConfirmPayment');
+
+const ParseResponse = require('../utils/ParseResponse');
+const SOAPRequest = require('../utils/SOAPRequest');
+const responseError = require('../utils/errors/responseError');
+
+const parseResponse = new ParseResponse('processcheckoutresponse');
+const soapRequest = new SOAPRequest();
+
+class PaymentRequest {
+  constructor(request, parser) {
+    this.parser = parser;
+    this.soapRequest = request;
+    this.callbackMethod = 'POST';
+  }
+
+  buildSoapBody(data) {
+    this.body = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="tns:ns">
+      <soapenv:Header>
+        <tns:CheckOutHeader>
+          <MERCHANT_ID>${process.env.PAYBILL_NUMBER}</MERCHANT_ID>
+          <PASSWORD>${data.encryptedPassword}</PASSWORD>
+          <TIMESTAMP>${data.timeStamp}</TIMESTAMP>
+        </tns:CheckOutHeader>
+      </soapenv:Header>
+      <soapenv:Body>
+        <tns:processCheckOutRequest>
+          <MERCHANT_TRANSACTION_ID>${data.merchantTransactionID}
+          </MERCHANT_TRANSACTION_ID>
+          <REFERENCE_ID>${String(data.referenceID).slice(0, 8)}</REFERENCE_ID>
+          <AMOUNT>${data.amountInDoubleFloat}</AMOUNT>
+          <MSISDN>${data.clientPhoneNumber}</MSISDN>
+          <ENC_PARAMS>${JSON.stringify(data.extraPayload)}</ENC_PARAMS>
+          <CALL_BACK_URL>${data.callbackURL}</CALL_BACK_URL>
+          <CALL_BACK_METHOD>${this.callbackMethod}</CALL_BACK_METHOD>
+          <TIMESTAMP>${data.timeStamp}</TIMESTAMP>
+        </tns:processCheckOutRequest>
+      </soapenv:Body>
+    </soapenv:Envelope>`;
+
+    return this;
+  }
+
+  handler(req, res) {
+    const paymentDetails = {
+      // transaction reference ID
+      referenceID: (req.body.referenceID || uuid.v4()),
+      // product, service or order ID
+      merchantTransactionID: (req.body.merchantTransactionID || uuid.v1()),
+      amountInDoubleFloat: req.body.totalAmount,
+      clientPhoneNumber: req.body.phoneNumber,
+      extraPayload: (req.body.extraPayload || {}),
+      timeStamp: req.timeStamp,
+      encryptedPassword: req.encryptedPassword,
+      callbackURL: `${req.protocol}://${req.hostname}/api/v${process.env.API_VERSION}/payment/success`,
+    };
+
+    const payment = this.buildSoapBody(paymentDetails);
+    const request = this.soapRequest.construct(payment, this.parser);
+
+    // remove encryptedPassword
+    delete paymentDetails.encryptedPassword;
+
+    // convert paymentDetails properties to underscore notation
+    const returnThesePaymentDetails = {};
+    for (const key of Object.keys(paymentDetails)) {
+      const newkey = key.replace(/[A-Z]{1,}/g, match => '_' + match.toLowerCase());
+      returnThesePaymentDetails[newkey] = paymentDetails[key];
+      delete paymentDetails[key];
+    }
+
+    let finalResponse;
+    return request.post()
+      .then(response => {
+        finalResponse = {
+          response: Object.assign({}, response, returnThesePaymentDetails),
+        };
+
+        const params = {
+          transactionID: response.trx_id,
+          timeStamp: req.timeStamp,
+          encryptedPassword: req.encryptedPassword,
+        };
+        return ConfirmPayment.handler(params);
+      })
+      .then((response) => {
+        Object.assign(finalResponse.response, response);
+        return res.status(200).json(finalResponse);
+      })
+      .catch(error => responseError(error, res));
+  }
+}
+
+module.exports = new PaymentRequest(soapRequest, parseResponse);
+
+
+
+================================================
+FILE: server/controllers/PaymentStatus.js
+================================================
+'use strict';
+
+const ParseResponse = require('../utils/ParseResponse');
+const SOAPRequest = require('../utils/SOAPRequest');
+const responseError = require('../utils/errors/responseError');
+
+const parseResponse = new ParseResponse('transactionstatusresponse');
+const soapRequest = new SOAPRequest();
+
+class PaymentStatus {
+  constructor(request, parser) {
+    this.parser = parser;
+    this.soapRequest = request;
+  }
+
+  buildSoapBody(data) {
+    const transactionStatusRequest = typeof data.transactionID !== 'undefined' ?
+      '<TRX_ID>' + data.transactionID + '</TRX_ID>' :
+      '<MERCHANT_TRANSACTION_ID>' + data.merchantTransactionID + '</MERCHANT_TRANSACTION_ID>';
+
+    this.body = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="tns:ns">
+      <soapenv:Header>
+        <tns:CheckOutHeader>
+          <MERCHANT_ID>${process.env.PAYBILL_NUMBER}</MERCHANT_ID>
+          <PASSWORD>${data.encryptedPassword}</PASSWORD>
+          <TIMESTAMP>${data.timeStamp}</TIMESTAMP>
+        </tns:CheckOutHeader>
+      </soapenv:Header>
+      <soapenv:Body>
+        <tns:transactionStatusRequest>
+          ${transactionStatusRequest}
+        </tns:transactionStatusRequest>
+      </soapenv:Body>
+    </soapenv:Envelope>`;
+
+    return this;
+  }
+
+  handler(req, res) {
+    const paymentDetails = {
+      transactionID: req.params.id,
+      timeStamp: req.timeStamp,
+      encryptedPassword: req.encryptedPassword,
+    };
+    const payment = this.buildSoapBody(paymentDetails);
+    const status = this.soapRequest.construct(payment, this.parser);
+
+    // process PaymentStatus response
+    return status.post()
+      .then(response => res.status(200).json({ response }))
+      .catch(error => responseError(error, res));
+  }
+}
+
+module.exports = new PaymentStatus(soapRequest, parseResponse);
+
+
+
+================================================
+FILE: server/controllers/PaymentSuccess.js
+================================================
+'use strict';
+
+const request = require('request');
+const statusCodes = require('../config/statusCodes');
+
+class PaymentSuccess {
+  constructor() {
+    this.request = request;
+  }
+
+  handler(req, res, next) {
+    const response = {};
+    const baseURL = `${req.protocol}://${req.hostname}:${process.env.PORT || 8080}`;
+    let endpoint = `${baseURL}/api/v1/thumbs/up`;
+
+    if ('MERCHANT_ENDPOINT' in process.env) {
+      endpoint = process.env.MERCHANT_ENDPOINT;
+    } else {
+      if (process.env.NODE_ENV !== 'development') {
+        next(new Error('MERCHANT_ENDPOINT has not been provided in environment configuration'));
+        return;
+      }
+    }
+
+    for (const key of Object.keys(req.body)) {
+      const prop = key.toLowerCase().replace(/\-/g, '');
+      response[prop] = req.body[key];
+    }
+
+    if ('enc_params' in response) {
+      // decrypted encrypted extra parameters provided in ENC_PARAMS
+      response.extra_payload = JSON.parse(new Buffer(response.enc_params, 'base64').toString());
+      delete response.enc_params;
+    }
+
+    const extractCode = statusCodes
+      .find(stc => stc.return_code === parseInt(response.return_code, 10));
+
+    Object.assign(response, extractCode);
+    // console.log('PAYMENT NOTIFICATON from SAG');
+    // console.log({ response });
+
+    const requestParams = {
+      method: 'POST',
+      uri: endpoint,
+      rejectUnauthorized: false,
+      body: JSON.stringify({ response }),
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+      },
+    };
+
+    // make a request to the merchant's endpoint
+    this.request(requestParams, (error) => {
+      if (error) {
+        res.sendStatus(500);
+        return;
+      }
+      res.sendStatus(200);
+    });
+  }
+}
+
+module.exports = new PaymentSuccess();
+
+
+
+================================================
+FILE: server/public/css/style.css
+================================================
+@charset "utf-8";@import url(https://fonts.googleapis.com/css?family=Asap:400,700);html{cursor:default;font-family:'Asap',sans-serif;margin:0;overflow-x:hidden;padding:0}body{cursor:default;font-family:'Asap',sans-serif;font-size:1.5em;margin:0;overflow-x:hidden;padding:0;color:#3a3a3a;background:#fefefe}.homepage{margin-top:10%;text-align:center}.homepage h1{font-weight:bolder;font-size:4em;padding-bottom:0;margin-bottom:0}.homepage p{font-size:2em}.homepage footer{font-size:.25em}.homepage .red{font-weight:bold;color:red}
+
+
+================================================
+FILE: server/public/css/style.less
+================================================
+@import url(https://fonts.googleapis.com/css?family=Asap:400,700);
+@charset "utf-8";
+html {
+    cursor: default;
+    font-family: 'Asap', sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+    padding: 0;
+}
+
+body {
+    cursor: default;
+    font-family: 'Asap', sans-serif;
+    font-size: 1.5em;
+    margin: 0;
+    overflow-x: hidden;
+    padding: 0;
+    color: #3a3a3a;
+    background: #fefefe;
+}
+
+.homepage {
+    margin-top: 10%;
+    text-align: center;
+    h1 {
+        font-weight: bolder;
+        font-size: 4em;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+    p {
+        font-size: 2em;
+    }
+    footer {
+        font-size: .25em;
+    }
+    .red {
+        font-weight: bold;
+        color: red;
+    }
+}
+
+
+
+================================================
+FILE: server/routes/index.js
+================================================
+'use strict';
+
+const PaymentRequest = require('../controllers/PaymentRequest');
+const PaymentStatus = require('../controllers/PaymentStatus');
+const PaymentSuccess = require('../controllers/PaymentSuccess');
+const checkForRequiredParams = require('../validators/checkForRequiredParams');
+
+
+module.exports = (router) => {
+  const paymentRequestHandler = (req, res) => PaymentRequest.handler(req, res);
+
+  // check the status of the API system
+  router.get('/status', (req, res) => res.json({ status: 200 }));
+
+  router.post('/payment/request', checkForRequiredParams, paymentRequestHandler);
+  router.get('/payment/status/:id', (req, res) => PaymentStatus.handler(req, res));
+  router.all('/payment/success', (req, res) => PaymentSuccess.handler(req, res));
+
+  // for testing last POST response
+  // if MERCHANT_ENDPOINT has not been provided
+  router.all('/thumbs/up', (req, res) => res.sendStatus(200));
+
+  return router;
+};
+
+
+
+================================================
+FILE: server/utils/GenEncryptedPassword.js
+================================================
+'use strict';
+
+const crypto = require('crypto');
+
+module.exports = class GenEncryptedPassword {
+  constructor(timeStamp) {
+    const concatenatedString = [
+      process.env.PAYBILL_NUMBER,
+      process.env.PASSKEY,
+      timeStamp,
+    ].join('');
+    const hash = crypto.createHash('sha256');
+    this.hashedPassword = hash.update(concatenatedString).digest('hex'); // or 'binary'
+    this.hashedPassword = new Buffer(this.hashedPassword).toString('base64');
+  }
+};
+
+
+
+================================================
+FILE: server/utils/genTransactionPassword.js
+================================================
+'use strict';
+
+const moment = require('moment');
+const GenEncryptedPassword = require('./GenEncryptedPassword');
+
+const genTransactionPassword = (req, res, next) => {
+  req.timeStamp = moment().format('YYYYMMDDHHmmss'); // In PHP => "YmdHis"
+  req.encryptedPassword = new GenEncryptedPassword(req.timeStamp).hashedPassword;
+  // console.log('encryptedPassword:', req.encryptedPassword);
+  next();
+};
+
+module.exports = genTransactionPassword;
+
+
+
+================================================
+FILE: server/utils/ParseResponse.js
+================================================
+'use strict';
+
+const cheerio = require('cheerio');
+const statusCodes = require('../config/statusCodes');
+
+
+module.exports = class ParseResponse {
+  constructor(bodyTagName) {
+    this.bodyTagName = bodyTagName;
+  }
+
+  parse(soapResponse) {
+    const XMLHeader = /<\?[\w\s=.\-'"]+\?>/gi;
+    const soapHeaderPrefixes = /(<([\w\-]+:[\w\-]+\s)([\w=\-:"'\\\/\.]+\s?)+?>)/gi;
+
+    // Remove the XML header tag
+    soapResponse = soapResponse.replace(XMLHeader, '');
+
+    // Get the element PREFIXES from the soap wrapper
+    const soapInstance = soapResponse.match(soapHeaderPrefixes);
+    let soapPrefixes = soapInstance[0].match(/((xmlns):[\w\-]+)+/gi);
+    soapPrefixes = soapPrefixes.map(prefix => prefix.split(':')[1].replace(/\s+/gi, ''));
+
+    // Now clean the SOAP elements in the response
+    soapPrefixes.forEach(prefix => {
+      const xmlPrefixes = new RegExp(prefix + ':', 'gmi');
+      soapResponse = soapResponse.replace(xmlPrefixes, '');
+    });
+
+    // Remove xmlns from the soap wrapper
+    soapResponse = soapResponse.replace(/(xmlns):/gmi, '');
+
+    // lowercase and trim before returning it
+    this.response = soapResponse.toLowerCase().trim();
+    return this;
+  }
+
+  toJSON() {
+    this.json = {};
+    const $ = cheerio.load(this.response, { xmlMode: true });
+
+    // Get the children tagName and its values
+    $(this.bodyTagName).children().each((i, el) => {
+      if (el.children.length === 1) {
+        let value = el.children[0].data.replace(/\s{2,}/gi, ' ');
+        value = value.replace(/\n/gi, '').trim();
+        this.json[el.name] = value;
+      }
+    });
+
+    // delete the enc_params value
+    delete this.json.enc_params;
+
+    // Get the equivalent HTTP CODE to respond with
+    this.json = Object.assign({}, this.extractCode(), this.json);
+    return this.json;
+  }
+
+  extractCode() {
+    return statusCodes.find(sts => sts.return_code === parseInt(this.json.return_code, 10));
+  }
+};
+
+
+
+================================================
+FILE: server/utils/SOAPRequest.js
+================================================
+'use strict';
+
+const request = require('request');
+
+module.exports = class SOAPRequest {
+  construct(payment, parser) {
+    this.request = request;
+    this.parser = parser;
+    this.requestOptions = {
+      method: 'POST',
+      uri: process.env.ENDPOINT,
+      rejectUnauthorized: false,
+      body: payment.body,
+      headers: {
+        'content-type': 'application/xml; charset=utf-8',
+      },
+    };
+    return this;
+  }
+
+  post() {
+    return new Promise((resolve, reject) => {
+      // Make the soap request to the SAG URI
+      this.request(this.requestOptions, (error, response, body) => {
+        if (error) {
+          reject({ description: error.message });
+          return;
+        }
+
+        const parsedResponse = this.parser.parse(body);
+        const json = parsedResponse.toJSON();
+
+        // Anything that is not "00" as the
+        // SOAP response code is a Failure
+        if (json && json.status_code !== 200) {
+          reject(json);
+          return;
+        }
+
+        // Else everything went well
+        resolve(json);
+      });
+    });
+  }
+};
+
+
+
+================================================
+FILE: server/utils/ucFirst.js
+================================================
+'use strict';
+// ucFirst (typeof String):
+// returns String with first character uppercased
+
+module.exports = (string) => {
+  const word = string;
+  let ucFirstWord = '';
+
+  for (let x = 0, length = word.length; x < length; x++) {
+    // get the character's ASCII code
+    let character = word[x];
+      // check to see if the character is capitalised/in uppercase using REGEX
+    const isUpperCase = /[A-Z]/g.test(character);
+    const asciiCode = character.charCodeAt(0);
+
+    if ((asciiCode >= 65 && asciiCode <= (65 + 25)) ||
+     (asciiCode >= 97 && asciiCode <= (97 + 25))) {
+      // If the 1st letter is not in uppercase
+      if (!isUpperCase && x === 0) {
+        // capitalize the letter, then convert it back to decimal value
+        character = String.fromCharCode(asciiCode - 32);
+      } else if (isUpperCase && x > 0) {
+        // lowercase any of the letters that are not in the 1st postion that are in uppercase
+        // lower case the letter, converting it back to decimal value
+        character = String.fromCharCode(asciiCode + 32);
+      }
+    }
+
+    ucFirstWord += character;
+  }
+
+  return ucFirstWord;
+};
+
+
+
+================================================
+FILE: server/utils/errors/responseError.js
+================================================
+'use strict';
+
+const responseError = (error, res) => {
+  const descriptionExists = (typeof error === 'object' && 'description' in error);
+  const statusCodeExists = (typeof error === 'object' && 'status_code' in error);
+
+  const err = new Error(descriptionExists ? error.description : error);
+  err.status = statusCodeExists ? error.status_code : 500;
+  return res.status(err.status).json({ response: error });
+};
+
+module.exports = responseError;
+
+
+
+================================================
+FILE: server/validators/checkForRequiredParams.js
+================================================
+'use strict';
+
+module.exports = (req, res, next) => {
+  const requiredBodyParams = [
+    'referenceID',
+    'merchantTransactionID',
+    'totalAmount',
+    'phoneNumber',
+  ];
+
+  if (req.body && 'phoneNumber' in req.body) {
+    // validate the phone number
+    if (!/\+?(254)[0-9]{9}/g.test(req.body.phoneNumber)) {
+      return res.status(400).send('Invalid [phoneNumber]');
+    }
+  } else {
+    return res.status(400).send('No [phoneNumber] parameter was found');
+  }
+
+  // validate total amount
+  if (req.body && 'totalAmount' in req.body) {
+    if (!/^[\d]+(\.[\d]{2})?$/g.test(req.body.totalAmount)) {
+      return res.status(400).send('Invalid [totalAmount]');
+    }
+
+    if (/^[\d]+$/g.test(req.body.totalAmount)) {
+      req.body.totalAmount = (parseInt(req.body.totalAmount, 10)).toFixed(2);
+    }
+  } else {
+    return res.status(400).send('No [totalAmount] parameter was found');
+  }
+
+  const bodyParamKeys = Object.keys(req.body);
+  const extraPayload = {};
+
+  // anything that is not a required param
+  // should be added to the extraPayload object
+  for (const key of bodyParamKeys) {
+    if (requiredBodyParams.indexOf(key) === -1) {
+      extraPayload[key] = req.body[key];
+      delete req.body[key];
+    }
+  }
+  req.body.extraPayload = extraPayload;
+  // console.log('extraPayload', req.body.extraPayload);
+  return next();
+};
+
+
+
+================================================
+FILE: server/views/error.jade
+================================================
+extends layout
+
+block content
+  h1= message
+  h2= error.status
+  pre #{error.stack}
+
+
+
+================================================
+FILE: server/views/index.jade
+================================================
+extends layout
+
+block content
+  .homepage
+    a(style="color: #5FAD24" href="https://kn9ts.github.io/project-mulla" target="_blank")
+      h1= title
+    p ...because Time is Money!
+    footer
+      p.text-center.text-muted.small-padding
+        | © 2016, with <span class="red">love</span> by
+        <a class="red" target="_blank" href="http://twitter.com/kn9ts">Eugene Mutai</a>
+
+
+
+================================================
+FILE: server/views/layout.jade
+================================================
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/css/style.css')
+  body
+    block content
+
+
+
+================================================
+FILE: test/environment.js
+================================================
+'use strict';
+
+require('../environment');
+const chai = require('chai');
+const expect = chai.expect;
+
+describe('environment.js', () => {
+  it('Should load default environment vars if environment stage is not defined', () => {
+    const envMembers = [
+      'API_VERSION',
+      'ENDPOINT',
+      'SESSION_SECRET_KEY',
+      'PAYBILL_NUMBER',
+      'PASSKEY',
+    ];
+    // should have 'MERCHANT_ENDPOINT' if env is not 'development'
+    if (process.env.NODE_ENV !== 'development') envMembers.push('MERCHANT_ENDPOINT');
+    expect(Object.keys(process.env)).to.include.members(envMembers);
+  });
+});
+
+
+
+================================================
+FILE: test/controllers/ConfirmPayment.js
+================================================
+'use strict';
+
+require('../../environment');
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+const moment = require('moment');
+const uuid = require('node-uuid');
+
+const confirmPayment = require('../../server/controllers/ConfirmPayment');
+const GenEncryptedPassword = require('../../server/utils/GenEncryptedPassword');
+
+describe('confirmPayment', () => {
+  const timeStamp = moment().format('YYYYMMDDHHmmss');
+  const encryptedPassword = new GenEncryptedPassword(timeStamp).hashedPassword;
+  const params = {
+    transactionID: uuid.v1(),
+    timeStamp,
+    encryptedPassword,
+  };
+
+  const req = {};
+  req.timeStamp = timeStamp;
+  req.encryptedPassword = encryptedPassword;
+  req.params = {
+    id: uuid.v1(),
+  };
+
+  const res = {};
+  res.status = sinon.stub().returns(res);
+  res.json = sinon.stub();
+
+  const response = { status_code: 200 };
+  const promise = new Promise((resolve) => {
+    resolve(response);
+  });
+
+  sinon.stub(promise, 'then', (callback) => {
+    callback(response);
+    return promise;
+  });
+
+  sinon.stub(promise, 'catch', (callback) => {
+    callback(new Error('threw an error'));
+    return promise;
+  });
+
+  beforeEach(() => {
+    promise.then.reset();
+    promise.catch.reset();
+  });
+
+  confirmPayment.parser = sinon.stub().returnsThis();
+  confirmPayment.soapRequest.construct = sinon.stub().returnsThis();
+  confirmPayment.soapRequest.post = sinon.stub().returns(promise);
+
+  it('BuildSoapBody builds the soap body string with transactionID', () => {
+    confirmPayment.buildSoapBody(params);
+
+    assert.isString(confirmPayment.body);
+    assert.match(confirmPayment.body, /(TRX_ID)/);
+    assert.notMatch(confirmPayment.body, /(MERCHANT_TRANSACTION_ID)/);
+    assert.match(confirmPayment.body, /(soapenv:Envelope)/gi);
+  });
+
+  it('if transactionID is not provide soap body built with merchantTransactionID', () => {
+    delete params.transactionID;
+    params.merchantTransactionID = uuid.v4();
+    confirmPayment.buildSoapBody(params);
+
+    assert.isString(confirmPayment.body);
+    assert.match(confirmPayment.body, /(MERCHANT_TRANSACTION_ID)/);
+    assert.notMatch(confirmPayment.body, /(TRX_ID)/);
+    assert.match(confirmPayment.body, /(soapenv:Envelope)/gi);
+  });
+
+  it('Makes a SOAP request and returns a promise', () => {
+    confirmPayment.buildSoapBody = sinon.stub();
+    // const confirmPaymentHandler = sinon.spy(confirmPayment, 'handler');
+    confirmPayment.handler(req, res);
+
+    assert.isTrue(confirmPayment.buildSoapBody.called);
+    assert.isTrue(confirmPayment.soapRequest.construct.called);
+    assert.isTrue(confirmPayment.soapRequest.post.called);
+
+    assert.isFalse(promise.then.called);
+    assert.isFalse(promise.catch.called);
+  });
+});
+
+
+
+================================================
+FILE: test/controllers/PaymentRequest.js
+================================================
+'use strict';
+
+require('../../environment');
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+const moment = require('moment');
+const uuid = require('node-uuid');
+
+const paymentRequest = require('../../server/controllers/PaymentRequest');
+const confirmPayment = require('../../server/controllers/ConfirmPayment');
+const GenEncryptedPassword = require('../../server/utils/GenEncryptedPassword');
+
+process.env.API_VERSION = '1';
+
+describe('paymentRequest', () => {
+  const timeStamp = moment().format('YYYYMMDDHHmmss');
+  const encryptedPassword = new GenEncryptedPassword(timeStamp).hashedPassword;
+  const params = {
+    referenceID: uuid.v4(),
+    merchantTransactionID: uuid.v1(),
+    amountInDoubleFloat: '100.00',
+    clientPhoneNumber: '254723001575',
+    extraPayload: {},
+    timeStamp,
+    encryptedPassword,
+  };
+
+  const req = {};
+  req.protocol = 'https';
+  req.hostname = 'projectmullahostname.com';
+  req.timeStamp = timeStamp;
+  req.encryptedPassword = encryptedPassword;
+  req.body = {
+    totalAmount: '100.00',
+    phoneNumber: '254723001575',
+    extraPayload: {},
+  };
+
+  const res = {};
+  res.status = sinon.stub().returns(res);
+  res.json = sinon.stub();
+
+  const response = { status_code: 200 };
+  const promise = new Promise((resolve) => { resolve(response); });
+
+  sinon.stub(promise, 'then', (callback) => {
+    callback(response);
+    return promise;
+  });
+
+  sinon.stub(promise, 'catch', (callback) => {
+    callback(new Error('threw an error'));
+    return promise;
+  });
+
+  beforeEach(() => {
+    promise.then.reset();
+    promise.catch.reset();
+  });
+
+  paymentRequest.parser = sinon.stub().returnsThis();
+  paymentRequest.soapRequest.construct = sinon.stub().returnsThis();
+  paymentRequest.soapRequest.post = sinon.stub().returns(promise);
+
+  confirmPayment.parser = sinon.stub().returnsThis();
+  confirmPayment.soapRequest.construct = sinon.stub().returnsThis();
+  confirmPayment.soapRequest.post = sinon.stub().returns(promise);
+
+  it('BuildSoapBody builds the soap body string', () => {
+    paymentRequest.buildSoapBody(params);
+
+    assert.isString(paymentRequest.body);
+    assert.match(paymentRequest.body, /(soapenv:Envelope)/gi);
+  });
+
+  it('Makes a SOAP request and returns a promise', () => {
+    sinon.spy(confirmPayment, 'handler');
+    paymentRequest.buildSoapBody = sinon.stub();
+    paymentRequest.handler(req, res);
+
+    assert.isTrue(paymentRequest.buildSoapBody.called);
+    assert.isTrue(paymentRequest.soapRequest.construct.called);
+    assert.isTrue(paymentRequest.soapRequest.post.called);
+
+    assert.isTrue(confirmPayment.buildSoapBody.called);
+    assert.isTrue(confirmPayment.soapRequest.construct.called);
+    assert.isTrue(confirmPayment.soapRequest.post.called);
+
+    assert.isTrue(promise.then.calledTwice);
+    assert.isTrue(confirmPayment.handler.calledOnce);
+    assert.isTrue(promise.catch.called);
+
+    const spyCall = res.json.getCall(0);
+    assert.isObject(spyCall.args[0]);
+    console.log(spyCall.args[0]);
+    assert.includeMembers(Object.keys(spyCall.args[0].response), [
+      'status_code',
+      'reference_id',
+      'merchant_transaction_id',
+      'amount_in_double_float',
+      'client_phone_number',
+      'extra_payload',
+      'time_stamp',
+      'callback_url',
+    ]);
+  });
+});
+
+
+
+================================================
+FILE: test/controllers/PaymentStatus.js
+================================================
+'use strict';
+
+require('../../environment');
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+const moment = require('moment');
+const uuid = require('node-uuid');
+
+const paymentStatus = require('../../server/controllers/PaymentStatus');
+const GenEncryptedPassword = require('../../server/utils/GenEncryptedPassword');
+
+describe('paymentStatus', () => {
+  const timeStamp = moment().format('YYYYMMDDHHmmss');
+  const encryptedPassword = new GenEncryptedPassword(timeStamp).hashedPassword;
+  const params = {
+    transactionID: uuid.v1(),
+    timeStamp,
+    encryptedPassword,
+  };
+
+  const req = {};
+  req.timeStamp = timeStamp;
+  req.encryptedPassword = encryptedPassword;
+  req.params = {
+    id: uuid.v1(),
+  };
+
+  const res = {};
+  res.status = sinon.stub().returns(res);
+  res.json = sinon.stub();
+
+  const response = { status_code: 200 };
+  const promise = new Promise((resolve) => {
+    resolve(response);
+  });
+
+  sinon.stub(promise, 'then', (callback) => {
+    callback(response);
+    return promise;
+  });
+
+  sinon.stub(promise, 'catch', (callback) => {
+    callback(new Error('threw an error'));
+    return promise;
+  });
+
+  paymentStatus.parser = sinon.stub().returnsThis();
+  paymentStatus.soapRequest.construct = sinon.stub().returnsThis();
+  paymentStatus.soapRequest.post = sinon.stub().returns(promise);
+
+  it('BuildSoapBody builds the soap body string with transactionID', () => {
+    paymentStatus.buildSoapBody(params);
+
+    assert.isString(paymentStatus.body);
+    assert.match(paymentStatus.body, /(TRX_ID)/);
+    assert.notMatch(paymentStatus.body, /(MERCHANT_TRANSACTION_ID)/);
+    assert.match(paymentStatus.body, /(soapenv:Envelope)/gi);
+  });
+
+  it('if transactionID is not provide soap body built with merchantTransactionID', () => {
+    delete params.transactionID;
+    params.merchantTransactionID = uuid.v4();
+    paymentStatus.buildSoapBody(params);
+
+    assert.isString(paymentStatus.body);
+    assert.match(paymentStatus.body, /(MERCHANT_TRANSACTION_ID)/);
+    assert.notMatch(paymentStatus.body, /(TRX_ID)/);
+    assert.match(paymentStatus.body, /(soapenv:Envelope)/gi);
+  });
+
+  it('Makes a SOAP request and returns a promise', () => {
+    paymentStatus.buildSoapBody = sinon.stub();
+    paymentStatus.handler(req, res);
+
+    assert.isTrue(paymentStatus.buildSoapBody.called);
+    assert.isTrue(paymentStatus.soapRequest.construct.called);
+    assert.isTrue(paymentStatus.soapRequest.post.called);
+
+    assert.isTrue(promise.then.called);
+    assert.isTrue(promise.catch.called);
+    assert.isTrue(res.status.calledWithExactly(200));
+    assert.isTrue(res.json.called);
+
+    const spyCall = res.json.getCall(0);
+    assert.isObject(spyCall.args[0]);
+    assert.sameMembers(Object.keys(spyCall.args[0].response), [
+      'status_code',
+    ]);
+  });
+});
+
+
+
+================================================
+FILE: test/controllers/PaymentSuccess.js
+================================================
+'use strict';
+
+require('../../environment');
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+
+const paymentSuccess = require('../../server/controllers/PaymentSuccess');
+
+describe('paymentSuccess', () => {
+  const req = {};
+  req.protocol = 'https';
+  req.hostname = 'localhost';
+  req.body = {
+    MSISDN: '254723001575',
+    MERCHANT_TRANSACTION_ID: 'FG232FT0',
+    USERNAME: '',
+    PASSWORD: '',
+    AMOUNT: '100',
+    TRX_STATUS: 'Success',
+    RETURN_CODE: '00',
+    DESCRIPTION: 'Transaction successful',
+    'M-PESA_TRX_DATE': '2014-08-01 15:30:00',
+    'M-PESA_TRX_ID': 'FG232FT0',
+    TRX_ID: '1448',
+    ENC_PARAMS: new Buffer('{}').toString('base64'),
+  };
+  const res = {};
+  res.sendStatus = sinon.stub();
+  const next = sinon.stub();
+
+  const response = {};
+  for (const x of Object.keys(req.body)) {
+    const prop = x.toLowerCase().replace(/\-/g, '');
+    response[prop] = req.body[x];
+  }
+
+  let error = false;
+  sinon.stub(paymentSuccess, 'request', (params, callback) => {
+    callback(error);
+  });
+
+  it('Make a request to MERCHANT_ENDPOINT and respond to SAG with OK', () => {
+    process.env.MERCHANT_ENDPOINT = 'https://merchant-endpoint.com/mpesa/payment/complete';
+    paymentSuccess.handler(req, res, next);
+
+    const spyCall = paymentSuccess.request.getCall(0);
+    const args = spyCall.args[0];
+    const argsResponseBody = JSON.parse(args.body);
+
+    assert.isTrue(res.sendStatus.calledWithExactly(200));
+    assert.isTrue(paymentSuccess.request.called);
+    assert.isFalse(next.called);
+    assert.sameMembers(Object.keys(argsResponseBody.response), [
+      'amount',
+      'description',
+      'extra_payload',
+      'merchant_transaction_id',
+      'message',
+      'mpesa_trx_date',
+      'mpesa_trx_id',
+      'msisdn',
+      'password',
+      'return_code',
+      'status_code',
+      'trx_id',
+      'trx_status',
+      'username',
+    ]);
+  });
+
+  it('If MERCHANT_ENDPOINT is not provided, next is passed an error', () => {
+    delete process.env.MERCHANT_ENDPOINT;
+    process.env.NODE_ENV = 'production';
+    paymentSuccess.handler(req, res, next);
+
+    const spyCall = next.getCall(0);
+    const args = spyCall.args[0];
+
+    assert.isTrue(next.called);
+    assert.isTrue(args instanceof Error);
+  });
+
+  it('If MERCHANT_ENDPOINT is not reachable, an error response is sent back', () => {
+    process.env.MERCHANT_ENDPOINT = 'https://undefined-url';
+    error = new Error('ENDPOINT not reachable');
+    paymentSuccess.handler(req, res, next);
+
+    assert.isTrue(res.sendStatus.calledWithExactly(500));
+  });
+});
+
+
+
+================================================
+FILE: test/utils/genTransactionPassword.js
+================================================
+'use strict';
+
+const chai = require('chai');
+const assert = chai.assert;
+const expect = chai.expect;
+const sinon = require('sinon');
+
+const genTransactionPassword = require('../../server/utils/genTransactionPassword');
+
+describe('genTransactionPassword', () => {
+  const req = {};
+  const next = sinon.spy();
+
+  before(() => {
+    genTransactionPassword(req, null, next);
+  });
+
+  it('attaches an encryptedPassword property in request object', () => {
+    assert.isDefined(req.encryptedPassword, 'encryptedPassword generated');
+  });
+
+  it('attaches a timeStamp property in request object', () => {
+    assert.isNumber(parseInt(req.timeStamp, 10), 'is numerical');
+    assert.lengthOf(req.timeStamp, 14, 'is 14 numbers long');
+  });
+
+  it('expect next to have been called', () => {
+    expect(next).to.have.been.calledOnce;
+  });
+});
+
+
+
+================================================
+FILE: test/utils/ParseResponse.js
+================================================
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const chai = require('chai');
+const assert = chai.assert;
+
+const ParseResponse = require('../../server/utils/ParseResponse');
+const XMLFile = {
+  processCheckoutResponse: '../../docs/responses/2-process-checkout-response.xml',
+  transactionConfirmResponse: '../../docs/responses/4-transaction-confirmed.xml',
+  transactionCompleteResponse: '../../docs/responses/5-transaction-completed.xml',
+};
+
+describe('ParseResponse', () => {
+  it('when class is instantiated bodyTagName is defined', () => {
+    const parser = new ParseResponse('bodyTagName');
+    assert.equal(parser.bodyTagName, 'bodyTagName');
+  });
+
+  it('parses a processCheckoutResponse XML response', () => {
+    const processCheckoutResponse = fs.readFileSync(
+      path.join(__dirname, XMLFile.processCheckoutResponse),
+      'utf-8'
+    ).replace(/\n\s+/gmi, '');
+
+    const parser = new ParseResponse('processcheckoutresponse');
+    const parsedResponse = parser.parse(processCheckoutResponse);
+    parsedResponse.toJSON();
+
+    assert.isString(parser.response, 'XML was parsed');
+    assert.notMatch(parser.response, /[A-Z]/gm, 'all character are in lowercase');
+
+    assert.isObject(parser.json, 'JSON was extracted');
+    assert.includeMembers(Object.keys(parser.json), [
+      'return_code',
+      'description',
+      'trx_id',
+      'cust_msg',
+    ], 'parsed json has the following properties');
+  });
+
+  it('parses a transactionConfirmResponse XML response', () => {
+    const transactionConfirmResponse = fs.readFileSync(
+      path.join(__dirname, XMLFile.transactionConfirmResponse),
+      'utf-8'
+    ).replace(/\n\s+/gmi, '');
+
+    const parser = new ParseResponse('transactionconfirmresponse');
+    const parsedResponse = parser.parse(transactionConfirmResponse);
+    parsedResponse.toJSON();
+
+    assert.isString(parser.response, 'XML was parsed');
+    assert.notMatch(parser.response, /[A-Z]/gm, 'all character are in lowercase');
+
+    assert.isObject(parser.json, 'JSON was extracted');
+    assert.includeMembers(Object.keys(parser.json), [
+      'return_code',
+      'description',
+      'trx_id',
+    ], 'parsed json has the following properties');
+  });
+
+  it('parses a transactionCompleteResponse XML response', () => {
+    const transactionCompleteResponse = fs.readFileSync(
+      path.join(__dirname, XMLFile.transactionCompleteResponse),
+      'utf-8'
+    ).replace(/\n\s+/gmi, '');
+
+    const parser = new ParseResponse('resultmsg');
+    const parsedResponse = parser.parse(transactionCompleteResponse);
+    parsedResponse.toJSON();
+
+    assert.isString(parser.response, 'XML was parsed');
+    assert.notMatch(parser.response, /[A-Z]/gm, 'all character are in lowercase');
+
+    assert.isObject(parser.json, 'JSON was extracted');
+    assert.sameMembers(Object.keys(parser.json), [
+      'return_code',
+      'status_code',
+      'message',
+      'msisdn',
+      'amount',
+      'm-pesa_trx_date',
+      'm-pesa_trx_id',
+      'trx_status',
+      'description',
+      'merchant_transaction_id',
+      'trx_id',
+    ], 'parsed json has the following properties');
+  });
+});
+
+
+
+================================================
+FILE: test/utils/SOAPRequest.js
+================================================
+'use strict';
+
+require('../../environment');
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+const moment = require('moment');
+const uuid = require('node-uuid');
+
+const SOAPRequest = require('../../server/utils/SOAPRequest');
+const ParseResponse = require('../../server/utils/ParseResponse');
+const paymentRequest = require('../../server/controllers/PaymentRequest');
+const GenEncryptedPassword = require('../../server/utils/GenEncryptedPassword');
+
+describe('SOAPRequest', () => {
+  const timeStamp = moment().format('YYYYMMDDHHmmss');
+  const encryptedPassword = new GenEncryptedPassword(timeStamp).hashedPassword;
+  const paymentDetails = {
+    referenceID: uuid.v4(),
+    merchantTransactionID: uuid.v1(),
+    amountInDoubleFloat: '100.00',
+    clientPhoneNumber: '254723001575',
+    extraPayload: {},
+    timeStamp,
+    encryptedPassword,
+  };
+
+  const parser = new ParseResponse('bodyTagName');
+  parser.parse = sinon.stub().returns(parser);
+  parser.toJSON = sinon.stub();
+  parser.toJSON.onFirstCall().returns({ status_code: 200 });
+  parser.toJSON.onSecondCall().returns({ status_code: 400 });
+
+  const soapRequest = new SOAPRequest();
+  paymentRequest.buildSoapBody(paymentDetails);
+  soapRequest.construct(paymentRequest, parser);
+
+  let requestError = undefined;
+  sinon.stub(soapRequest, 'request', (params, callback) => {
+    callback(requestError, null, 'a soap dom tree string');
+  });
+
+  afterEach(() => {
+    requestError = undefined;
+  });
+
+  it('SOAPRequest is contructed', () => {
+    assert.instanceOf(soapRequest.parser, ParseResponse);
+    assert.sameMembers(Object.keys(soapRequest.requestOptions), [
+      'method',
+      'uri',
+      'rejectUnauthorized',
+      'body',
+      'headers',
+    ]);
+  });
+
+  it('Invokes then method from a successful response', (done) => {
+    const request = soapRequest.post().then((response) => {
+      assert.instanceOf(request, Promise);
+      assert.isObject(response);
+      assert.sameMembers(Object.keys(response), ['status_code']);
+      assert.isTrue(soapRequest.parser.parse.called);
+      assert.isTrue(soapRequest.parser.toJSON.called);
+      assert.isTrue(soapRequest.request.called);
+      done();
+    });
+  });
+
+  it('Invokes catch method from an unsuccessful response', (done) => {
+    const request = soapRequest.post().catch((error) => {
+      assert.instanceOf(request, Promise);
+      assert.isObject(error);
+      assert.sameMembers(Object.keys(error), ['status_code']);
+      assert.isTrue(soapRequest.parser.parse.called);
+      assert.isTrue(soapRequest.parser.toJSON.called);
+      assert.isTrue(soapRequest.request.called);
+      done();
+    });
+  });
+
+
+  it('Invokes catch method if an error is returned on invalid request', (done) => {
+    requestError = new Error('invalid URI provided');
+
+    const request = soapRequest.post().catch((error) => {
+      assert.instanceOf(request, Promise);
+      assert.isObject(error);
+      assert.sameMembers(Object.keys(error), ['description']);
+      assert.isTrue(soapRequest.parser.parse.called);
+      assert.isTrue(soapRequest.parser.toJSON.called);
+      assert.isTrue(soapRequest.request.called);
+      done();
+    });
+  });
+});
+
+
+
+================================================
+FILE: test/utils/ucFirst.js
+================================================
+'use strict';
+
+const chai = require('chai');
+const assert = chai.assert;
+
+const ucFirst = require('../../server/utils/ucFirst');
+
+describe('ucFirst', () => {
+  it('uppercases the 1st letter in the string', () => {
+    const string = 'Projectmulla';
+    assert.equal(ucFirst(string), 'Projectmulla');
+  });
+
+  it('lowercases all the letters in the string after the 1st letter', () => {
+    const string = 'proJECTMulLA';
+    assert.equal(ucFirst(string), 'Projectmulla');
+  });
+});
+
+
+
+================================================
+FILE: test/utils/errors/reponseError.js
+================================================
+'use strict';
+
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+
+const responseError = require('../../../server/utils/errors/responseError');
+
+describe('responseError', () => {
+  let spyCall;
+  const res = {};
+  let error = 'An error message';
+
+  beforeEach(() => {
+    res.status = sinon.stub().returns(res);
+    res.json = sinon.stub();
+
+    responseError(error, res);
+  });
+
+  it('Calls response method with default(500) error code', () => {
+    spyCall = res.status.getCall(0);
+    assert.isTrue(res.status.calledOnce);
+    assert.isTrue(spyCall.calledWithExactly(500));
+  });
+
+  it('Returns error wrapped in json response', () => {
+    spyCall = res.json.getCall(0);
+    assert.isTrue(res.json.calledOnce);
+    assert.isObject(spyCall.args[0]);
+    assert.property(spyCall.args[0], 'response', 'status');
+  });
+
+  it('Calls response method with custom error code', () => {
+    error = {
+      description: 'Bad request',
+      status_code: 400,
+    };
+    responseError(error, res);
+    spyCall = res.status.getCall(0);
+    assert.isTrue(res.status.called);
+    assert.isTrue(res.status.calledWithExactly(400));
+  });
+});
+
+
+
+================================================
+FILE: test/validators/checkForRequiredParams.js
+================================================
+'use strict';
+
+const chai = require('chai');
+const assert = chai.assert;
+const sinon = require('sinon');
+
+const checkForRequiredParams = require('../../server/validators/checkForRequiredParams');
+
+describe('checkForRequiredParams', () => {
+  const res = {};
+  const req = {};
+  let next = sinon.stub();
+
+  beforeEach(() => {
+    res.status = sinon.stub().returns(res);
+    res.send = sinon.stub();
+    next = sinon.stub();
+  });
+
+  it('Throws an error if phone number is not provided', () => {
+    req.body = {};
+    checkForRequiredParams(req, res, next);
+
+    assert.isTrue(res.status.calledWithExactly(400));
+    assert.isTrue(res.send.calledOnce);
+  });
+
+  it('Throws an error if phone number is not valid', () => {
+    req.body = {
+      phoneNumber: '0723001575',
+    };
+    checkForRequiredParams(req, res, next);
+    const spyCall = res.send.getCall(0);
+
+    assert.isTrue(res.status.calledWithExactly(400));
+    assert.isTrue(res.send.calledOnce);
+    assert.isString(spyCall.args[0], 'called with string');
+  });
+
+  it('Throws an error if total amount is not provided', () => {
+    req.body = {
+      phoneNumber: '254723001575',
+    };
+    checkForRequiredParams(req, res, next);
+    const spyCall = res.send.getCall(0);
+
+    assert.isTrue(res.status.calledWithExactly(400));
+    assert.isTrue(res.send.calledOnce);
+    assert.isString(spyCall.args[0], 'called with string');
+  });
+
+  it('Throws an error if total amount is not provided', () => {
+    req.body = {
+      phoneNumber: '254723001575',
+      totalAmount: 'a hundred bob',
+    };
+    checkForRequiredParams(req, res, next);
+    const spyCall = res.send.getCall(0);
+
+    assert.isTrue(res.status.calledWithExactly(400));
+    assert.isTrue(res.send.calledOnce);
+    assert.isString(spyCall.args[0], 'called with string');
+  });
+
+  it('Converts a whole number into a number with double floating points', () => {
+    req.body = {
+      phoneNumber: '254723001575',
+      totalAmount: '100',
+    };
+    checkForRequiredParams(req, res, next);
+
+    assert.equal(res.status.callCount, 0);
+    assert.equal(res.send.callCount, 0);
+    assert.isNumber(parseInt(req.body.totalAmount, 100), 'should be 100.00');
+  });
+
+  it('Next is returned if everything is valid', () => {
+    req.body = {
+      phoneNumber: '254723001575',
+      totalAmount: '100.00',
+    };
+    checkForRequiredParams(req, res, next);
+
+    assert.equal(res.status.callCount, 0);
+    assert.equal(res.send.callCount, 0);
+    assert.isTrue(next.calledOnce);
+    assert.isDefined(req.body.extraPayload);
+  });
+
+  it('Other params are moved into extraPayload property', () => {
+    req.body = {
+      phoneNumber: '254723001575',
+      totalAmount: '100.00',
+      userID: 1515,
+      location: 'Kilimani',
+    };
+    checkForRequiredParams(req, res, next);
+
+    assert.isDefined(req.body.extraPayload);
+    assert.sameMembers(Object.keys(req.body.extraPayload), ['userID', 'location']);
+  });
+});
+
+

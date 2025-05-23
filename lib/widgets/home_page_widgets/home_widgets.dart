@@ -1,4 +1,4 @@
-import 'package:budgetbuddy_app/services/category_provider.dart';
+import 'package:budgetbuddy_app/provider/category_provider.dart';
 import 'package:budgetbuddy_app/widgets/category widgets/category_type_dialog.dart';
 import 'package:budgetbuddy_app/widgets/category widgets/category_form_dialog.dart';
 import 'package:budgetbuddy_app/Mobile%20UI/notification_screen.dart';
@@ -10,8 +10,8 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:budgetbuddy_app/data models/budget_models.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:budgetbuddy_app/services/transaction_provider.dart';
-import 'package:budgetbuddy_app/services/notification_provider.dart';
+import 'package:budgetbuddy_app/provider/transaction_provider.dart';
+import 'package:budgetbuddy_app/provider/notification_provider.dart';
 import 'package:budgetbuddy_app/Mobile UI/category_report_page.dart';
 import 'package:budgetbuddy_app/Mobile UI/transaction_calendar_page.dart';
 
@@ -26,20 +26,11 @@ class BalanceAndCategories extends StatefulWidget {
 }
 
 class BalanceAndCategoriesState extends State<BalanceAndCategories> {
-  static const _shimmerCard = Card(
-    color: Appcolors.blue600,
-    child: Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Center(child: CircularProgressIndicator()),
-    ),
-  );
-
   // Cache calculations
   static double _lastTotalAmount = 0;
   static int _lastCategoryCount = 0;
   static int _lastUpdateTime = 0;
 
- 
   @override
   void initState() {
     super.initState();
@@ -71,7 +62,7 @@ class BalanceAndCategoriesState extends State<BalanceAndCategories> {
             ),
           );
         }
-        final categories = provider.categoryModels;
+        final categories = provider.categories;
         _updateCachedValues(categories);
 
         // Use cached values instead of recalculating
@@ -222,7 +213,7 @@ class UserAppbar extends StatelessWidget implements PreferredSizeWidget {
   static String _cachedGreeting = '';
   static int _lastCalculatedHour = -1;
 
-   String _getGreeting() {
+  String _getGreeting() {
     final now = DateTime.now();
     if (now.hour != _lastCalculatedHour) {
       _lastCalculatedHour = now.hour;
@@ -369,7 +360,6 @@ class TransactionView extends StatefulWidget {
 
 class TransactionViewState extends State<TransactionView>
     with AutomaticKeepAliveClientMixin {
-
   //this is the icon data for the transaction categories
   static const Map<String, IconData> _categoryIcons = {
     'food': Icons.restaurant,
@@ -413,7 +403,6 @@ class TransactionViewState extends State<TransactionView>
     _itemCache.clear(); // Clear cache when widget is disposed
     _categoryIcons.clear(); // Clear icon cache
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -442,7 +431,8 @@ class TransactionViewState extends State<TransactionView>
                     itemCount: provider.recentTransactions.length,
                     itemBuilder: (context, index) {
                       final transaction = provider.recentTransactions[index];
-                      return _getCachedItem(transaction);
+                      return _getCachedItem(
+                          transaction as Map<String, dynamic>);
                     },
                   )
           ],
@@ -535,7 +525,7 @@ class CategoryList extends StatelessWidget {
         if (provider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        final categories = provider.categoryModels;
+        final categories = provider.categories;
 
         if (provider.error != null) {
           return Center(
@@ -695,8 +685,7 @@ class BuildCategoryCard extends StatelessWidget {
         isSavings && category.goalAmount != null && category.goalAmount! > 0
             ? (category.amount / category.goalAmount!).clamp(0.0, 1.0)
             : 0.0;
-     int progressText(progress) =>
-        (progress * 100);
+    int progressText(progress) => (progress * 100);
 
     return Hero(
       tag: 'category-${category.id}',

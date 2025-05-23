@@ -1,0 +1,13 @@
+category_repo
+    - no shouldnt handle raw firebase operations, firebase service is reponsible for that, dont mix concerns
+    - this will handle communication of dat to UI layer lib/Mobile UI
+category_service
+    - use category_repo for this functionality, i named it repo instead of service
+
+Phase 2
+    -  this phase looks okay
+Phase 3
+    -  1st check for all the files that epend on category_provider so that i know how to handle data conversion and calls
+
+for the file specific changes, the category_repo shouldnt handle CRUD operations because as already said that is done by firebase service
+there is no category_service,that is named category_repo and ive already created the placeholder file for that so put code there

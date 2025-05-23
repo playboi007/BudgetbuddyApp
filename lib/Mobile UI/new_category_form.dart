@@ -17,10 +17,10 @@ class NewCategoryForm extends StatefulWidget {
   });
 
   @override
-  _NewCategoryFormState createState() => _NewCategoryFormState();
+  NewCategoryFormState createState() => NewCategoryFormState();
 }
 
-class _NewCategoryFormState extends State<NewCategoryForm> {
+class NewCategoryFormState extends State<NewCategoryForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _startAmountController = TextEditingController();

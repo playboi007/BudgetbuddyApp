@@ -2,7 +2,7 @@ import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:budgetbuddy_app/data models/budget_models.dart';
 import 'package:provider/provider.dart';
-import 'package:budgetbuddy_app/services/category_provider.dart';
+import 'package:budgetbuddy_app/provider/category_provider.dart';
 import 'package:budgetbuddy_app/Mobile UI/featured_goals_screen.dart';
 import 'package:budgetbuddy_app/widgets/category widgets/add_category_card.dart';
 import 'package:budgetbuddy_app/widgets/category widgets/category_details_dialog.dart';
@@ -33,27 +33,29 @@ class CategoriesPageState extends State<CategoriesPage> {
 
   void _showNewCategoryDialog(String categoryType) {
     showDialog<void>(
-      // Explicitly type the dialog return
       context: context,
       builder: (context) => CategoryFormDialog(
         categoryType: categoryType,
         onSave: (newCategory) async {
           try {
-            await Provider.of<CategoryProvider>(context, listen: false)
-                .addCategory({
+            final categoryData = {
               'name': newCategory.name,
               'amount': newCategory.amount,
               'categoryType': newCategory.categoryType,
               'goalAmount': newCategory.goalAmount,
               'isLocked': newCategory.isLocked,
-            });
+            };
+
+            // Using the updated provider method
+            await Provider.of<CategoryProvider>(context, listen: false)
+                .addCategory(categoryData);
 
             if (!mounted) return;
             Navigator.pop(context);
           } catch (e) {
             if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('error adding category: $e')),
+              SnackBar(content: Text('Error adding category: $e')),
             );
           }
         },
@@ -86,13 +88,11 @@ class CategoriesPageState extends State<CategoriesPage> {
         _error = null;
       });
 
-      //we'll use state provider hapa kuload categories
+      // Simplified loading call
       await Provider.of<CategoryProvider>(context, listen: false)
           .loadCategories();
 
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     } catch (e) {
       setState(() {
         _error = e.toString();
@@ -105,7 +105,7 @@ class CategoriesPageState extends State<CategoriesPage> {
   Widget build(BuildContext context) {
     return Consumer<CategoryProvider>(
       builder: (context, categoryProvider, child) {
-        final categories = categoryProvider.categoryModels;
+        final categories = categoryProvider.categories;
 
         if (_isLoading) {
           return const Scaffold(

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'cache_manager.dart';
+import '../repos/cache_manager.dart';
 
-abstract class BaseProvider with ChangeNotifier {
+abstract class BaseCacheProvider with ChangeNotifier {
   bool _isInitialized = false;
   bool _isLoading = true;
   String? _error;
@@ -44,4 +44,13 @@ abstract class BaseProvider with ChangeNotifier {
 
   @protected
   Future<void> initialize();
+}
+
+mixin BaseDataOperations<T> {
+  Future<List<T>> getByType(String type);
+  Future<List<T>> getCategoriesWithCache();
+  Future<void> addCategory(Map<String, dynamic> T );
+  Future<void> updateCategory(String id, Map<String, dynamic> T );
+  Future<void> deleteCategory(String id);
+  Future<void> loadCategories();
 }

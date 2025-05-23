@@ -7,7 +7,7 @@ import '../widgets/charts/pie_chart.dart';
 import '../widgets/charts/bar_chart.dart';
 import '../widgets/charts/line_chart.dart';
 import 'package:intl/intl.dart';
-import 'package:budgetbuddy_app/services/reports_service.dart';
+import 'package:budgetbuddy_app/repos/reports_service.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});

@@ -1,9 +1,8 @@
 import 'package:budgetbuddy_app/utils/constants/text_strings.dart';
 import 'package:budgetbuddy_app/utils/theme/text_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import '../services/course_provider.dart';
+import '../provider/course_provider.dart';
 import '../data models/course_model.dart';
 import 'course_detail_page.dart';
 import 'savings_tips_page.dart';
@@ -20,9 +19,11 @@ class FinancialEducationPageState extends State<FinancialEducationPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch courses when the page is initialized
-    Future.microtask(() =>
-        GetIt.I<CourseProvider>().loadCourses());
+    // Fetch courses when the page is initialized but place it in widgetsBinding so it can be initialized after 1st frame rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Provider.of<CourseProvider>(context, listen: false).loadCourses();
+    });
   }
 
   @override
