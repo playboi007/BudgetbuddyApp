@@ -17,6 +17,11 @@
 .swiftpm/
 migrate_working_dir/
 
+#ai helpers
+.blackboxrules
+.roo
+assets/docs/doc_help.txt
+
 # IntelliJ related
 *.iml
 *.ipr
