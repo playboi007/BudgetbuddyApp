@@ -1,0 +1,36 @@
+{
+  "time": {
+    "now": "2026-10-11T08:00:00.000Z",
+    "quoteCreatedOffsetMinutes": -1,
+    "quoteExpiryOffsetMinutes": 4
+  },
+  "actor": {
+    "ownerId": "owner-1",
+    "walletId": "wallet-1"
+  },
+  "wallet": {
+    "id": "wallet-1",
+    "ownerId": "owner-1",
+    "createdAt": "2026-10-08T08:00:00.000Z",
+    "revision": "seed"
+  },
+  "globalAvailableKes": 0,
+  "category": {
+    "id": "food",
+    "name": "food",
+    "kind": "spending",
+    "targetKes": 30000,
+    "balanceKes": 20000,
+    "createdAt": "2026-10-09T08:00:00.000Z"
+  },
+  "paymentRecipient": {
+    "type": "till",
+    "tillNumber": "001122"
+  },
+  "depositPayer": "254712345678",
+  "gateway": {
+    "acknowledgment": "accepted",
+    "checkoutRequestId": "checkout-1",
+    "description": "Accepted"
+  }
+}
