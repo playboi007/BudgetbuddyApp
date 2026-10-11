@@ -51,3 +51,5 @@ app.*.map.json
 
 # FVM-managed SDK link and local state
 .fvm/
+
+/doc/
