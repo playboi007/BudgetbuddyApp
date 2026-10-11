@@ -1,0 +1,5131 @@
+{
+  "schemaVersion": 1,
+  "sourceInputs": "test/fixtures/funds_inputs.json",
+  "providerScope": "reference provider fixture; no live provider or browser QA",
+  "fixedClockUtc": "2026-10-11T09:00:00.000Z",
+  "money": {
+    "currency": "KES",
+    "storedUnit": "minor units",
+    "minorUnitsPerKes": 100
+  },
+  "checkpoints": [
+    {
+      "id": "category.loaded",
+      "scenario": "category-management",
+      "action": "Load the funded wallet before category changes.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "idle",
+        "actionIsLoading": false,
+        "commandId": null,
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "category.created",
+      "scenario": "category-management",
+      "action": "Create an empty savings category.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "applied",
+        "actionIsLoading": false,
+        "commandId": "cmd-create-emergency",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "emergency",
+          "name": "Emergency",
+          "kind": "savingsGoal",
+          "archived": false,
+          "target": {
+            "minorUnits": 1000000,
+            "kes": "KES 10,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "category.edited",
+      "scenario": "category-management",
+      "action": "Rename the category and change its target.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "applied",
+        "actionIsLoading": false,
+        "commandId": "cmd-edit-emergency",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "emergency",
+          "name": "Emergency fund",
+          "kind": "savingsGoal",
+          "archived": false,
+          "target": {
+            "minorUnits": 1200000,
+            "kes": "KES 12,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "category.archived",
+      "scenario": "category-management",
+      "action": "Archive the empty category while preserving its history.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "applied",
+        "actionIsLoading": false,
+        "commandId": "cmd-archive-emergency",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "emergency",
+          "name": "Emergency fund",
+          "kind": "savingsGoal",
+          "archived": true,
+          "target": {
+            "minorUnits": 1200000,
+            "kes": "KES 12,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "funds.allocated",
+      "scenario": "allocate-release",
+      "action": "Move KES 5,000 from global funds into Couch.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "applied",
+        "actionIsLoading": false,
+        "commandId": "cmd-allocate-couch",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 4000000,
+          "kes": "KES 40,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1000000,
+          "kes": "KES 10,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1000000,
+          "kes": "KES 10,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2500000,
+            "kes": "KES 25,000.00"
+          },
+          "available": {
+            "minorUnits": 2500000,
+            "kes": "KES 25,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 1,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "funds.released",
+      "scenario": "allocate-release",
+      "action": "Return KES 3,000 from Couch to global funds.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "applied",
+        "actionIsLoading": false,
+        "commandId": "cmd-release-couch",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3700000,
+          "kes": "KES 37,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1300000,
+          "kes": "KES 13,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1300000,
+          "kes": "KES 13,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2200000,
+            "kes": "KES 22,000.00"
+          },
+          "available": {
+            "minorUnits": 2200000,
+            "kes": "KES 22,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 2,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 1,
+          "release": 1,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "deposit.loading",
+      "scenario": "deposit-success",
+      "action": "Show the deposit as loading while provider acknowledgment is gated.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "loading",
+        "actionIsLoading": true,
+        "commandId": "cmd-deposit-50000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-empty-v1:1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "allocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "unallocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        }
+      },
+      "categories": [],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-deposit-50000",
+            "kind": "deposit",
+            "status": "submitting",
+            "amount": {
+              "minorUnits": 5000000,
+              "kes": "KES 50,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "deposit.pending",
+      "scenario": "deposit-success",
+      "action": "Keep the wallet at zero after an accepted pending acknowledgment.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-deposit-50000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-empty-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "allocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "unallocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        }
+      },
+      "categories": [],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-deposit-50000",
+            "kind": "deposit",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 5000000,
+              "kes": "KES 50,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "deposit.succeeded",
+      "scenario": "deposit-success",
+      "action": "Credit KES 50,000 after the trusted success result.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-deposit-50000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-empty-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "unallocated": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-deposit-50000",
+            "kind": "deposit",
+            "status": "succeeded",
+            "amount": {
+              "minorUnits": 5000000,
+              "kes": "KES 50,000.00"
+            },
+            "ledgerOperationId": "ledger:request:request:cmd-deposit-50000"
+          }
+        ],
+        "reservations": [],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 1,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "deposit-failure.pending",
+      "scenario": "deposit-failure",
+      "action": "Show the deposit as pending before its provider result.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-deposit-failure",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-empty-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "allocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "unallocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        }
+      },
+      "categories": [],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-deposit-failure",
+            "kind": "deposit",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 5000000,
+              "kes": "KES 50,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "deposit-failure.failed",
+      "scenario": "deposit-failure",
+      "action": "Keep the wallet uncredited after confirmed failure.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-deposit-failure",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-empty-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "allocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "unallocated": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        }
+      },
+      "categories": [],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-deposit-failure",
+            "kind": "deposit",
+            "status": "failed",
+            "amount": {
+              "minorUnits": 5000000,
+              "kes": "KES 50,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend18.loading",
+      "scenario": "couch-18000",
+      "action": "Hold KES 18,000 while waiting for provider acknowledgment.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "loading",
+        "actionIsLoading": true,
+        "commandId": "cmd-spend-couch-18000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 1800000,
+          "kes": "KES 18,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-couch-18000",
+            "kind": "payment",
+            "status": "submitting",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-couch-18000",
+            "requestId": "request:cmd-spend-couch-18000",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend18.pending",
+      "scenario": "couch-18000",
+      "action": "Keep Couch KES 2,000 available while the accepted payment is pending.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-18000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 1800000,
+          "kes": "KES 18,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-couch-18000",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-couch-18000",
+            "requestId": "request:cmd-spend-couch-18000",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend18.succeeded",
+      "scenario": "couch-18000",
+      "action": "Settle the complete KES 18,000 spend.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-18000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        },
+        "allocated": {
+          "minorUnits": 1700000,
+          "kes": "KES 17,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-couch-18000",
+            "kind": "payment",
+            "status": "succeeded",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": "ledger:request:request:cmd-spend-couch-18000"
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-couch-18000",
+            "requestId": "request:cmd-spend-couch-18000",
+            "categoryId": "couch",
+            "status": "consumed",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 1
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend23.approval-required",
+      "scenario": "couch-23000-approved",
+      "action": "Ask explicit approval for the exact KES 3,000 global shortfall.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": true,
+        "actionStatus": "requiresGlobalApproval",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-23000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": true,
+        "approvalRequirement": {
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        },
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "spend23.pending",
+      "scenario": "couch-23000-approved",
+      "action": "Reserve KES 20,000 from Couch and KES 3,000 globally.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-23000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1200000,
+          "kes": "KES 12,000.00"
+        },
+        "reserved": {
+          "minorUnits": 2300000,
+          "kes": "KES 23,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 2700000,
+          "kes": "KES 27,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-couch-23000",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-couch-23000",
+            "requestId": "request:cmd-spend-couch-23000",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 300000,
+              "kes": "KES 3,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend23.succeeded",
+      "scenario": "couch-23000-approved",
+      "action": "Settle the complete KES 23,000 spend once.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-23000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 2700000,
+          "kes": "KES 27,000.00"
+        },
+        "allocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1200000,
+          "kes": "KES 12,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1200000,
+          "kes": "KES 12,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 2700000,
+          "kes": "KES 27,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-couch-23000",
+            "kind": "payment",
+            "status": "succeeded",
+            "amount": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "ledgerOperationId": "ledger:request:request:cmd-spend-couch-23000"
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-couch-23000",
+            "requestId": "request:cmd-spend-couch-23000",
+            "categoryId": "couch",
+            "status": "consumed",
+            "total": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 300000,
+              "kes": "KES 3,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 1
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend-failure.pending",
+      "scenario": "spend-confirmed-failure",
+      "action": "Show the full payment hold while awaiting the provider result.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-confirmed-failure",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1200000,
+          "kes": "KES 12,000.00"
+        },
+        "reserved": {
+          "minorUnits": 2300000,
+          "kes": "KES 23,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 2700000,
+          "kes": "KES 27,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-confirmed-failure",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-confirmed-failure",
+            "requestId": "request:cmd-spend-confirmed-failure",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 300000,
+              "kes": "KES 3,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend-failure.failed",
+      "scenario": "spend-confirmed-failure",
+      "action": "Release the reservation and restore the seed balances.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-confirmed-failure",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-confirmed-failure",
+            "kind": "payment",
+            "status": "failed",
+            "amount": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-confirmed-failure",
+            "requestId": "request:cmd-spend-confirmed-failure",
+            "categoryId": "couch",
+            "status": "released",
+            "total": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 300000,
+              "kes": "KES 3,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend-unknown.pending",
+      "scenario": "spend-unknown",
+      "action": "Show the approved payment hold while pending.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-unknown",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1200000,
+          "kes": "KES 12,000.00"
+        },
+        "reserved": {
+          "minorUnits": 2300000,
+          "kes": "KES 23,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 2700000,
+          "kes": "KES 27,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-unknown",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-unknown",
+            "requestId": "request:cmd-spend-unknown",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 300000,
+              "kes": "KES 3,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend-unknown.awaiting-verification",
+      "scenario": "spend-unknown",
+      "action": "Keep the reservation held until a verified result arrives.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-unknown",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1200000,
+          "kes": "KES 12,000.00"
+        },
+        "reserved": {
+          "minorUnits": 2300000,
+          "kes": "KES 23,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 2700000,
+          "kes": "KES 27,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-unknown",
+            "kind": "payment",
+            "status": "awaitingVerification",
+            "amount": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-unknown",
+            "requestId": "request:cmd-spend-unknown",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 2300000,
+              "kes": "KES 23,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 300000,
+              "kes": "KES 3,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "gateway.rejected",
+      "scenario": "gateway-acknowledgments",
+      "action": "Release the payment hold after an immediate provider rejection.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-gateway-rejected",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-gateway-rejected",
+            "kind": "payment",
+            "status": "failed",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-gateway-rejected",
+            "requestId": "request:cmd-gateway-rejected",
+            "categoryId": "couch",
+            "status": "released",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "gateway.unknown",
+      "scenario": "gateway-acknowledgments",
+      "action": "Keep the payment hold when provider acknowledgment is unknown.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-gateway-unknown",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 1800000,
+          "kes": "KES 18,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-gateway-unknown",
+            "kind": "payment",
+            "status": "awaitingVerification",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-gateway-unknown",
+            "requestId": "request:cmd-gateway-unknown",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend36.rejected",
+      "scenario": "couch-36000-insufficient",
+      "action": "Block a KES 36,000 spend because KES 1,000 remains unfunded.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "rejected",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-36000",
+        "commandError": "Category and available global funds do not cover the complete spend.",
+        "commandErrorCode": "insufficientFunds",
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 1600000,
+            "kes": "KES 16,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 100000,
+            "kes": "KES 1,000.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": false
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "spend20.pending",
+      "scenario": "couch-20000-exact",
+      "action": "Reserve the exact Couch balance without global approval.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-20000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 2000000,
+          "kes": "KES 20,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3000000,
+          "kes": "KES 30,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-couch-20000",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-couch-20000",
+            "requestId": "request:cmd-spend-couch-20000",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "spend20.succeeded",
+      "scenario": "couch-20000-exact",
+      "action": "Settle the exact KES 20,000 Couch spend.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-couch-20000",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 3000000,
+          "kes": "KES 30,000.00"
+        },
+        "allocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3000000,
+          "kes": "KES 30,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-couch-20000",
+            "kind": "payment",
+            "status": "succeeded",
+            "amount": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "ledgerOperationId": "ledger:request:request:cmd-spend-couch-20000"
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-couch-20000",
+            "requestId": "request:cmd-spend-couch-20000",
+            "categoryId": "couch",
+            "status": "consumed",
+            "total": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 2000000,
+              "kes": "KES 20,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 1
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "duplicate.first-command",
+      "scenario": "duplicate-command-callback",
+      "action": "Record the first payment request and reservation.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-duplicate",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 1800000,
+          "kes": "KES 18,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-duplicate",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-duplicate",
+            "requestId": "request:cmd-spend-duplicate",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "duplicate.replayed-command",
+      "scenario": "duplicate-command-callback",
+      "action": "Replay the same command without another provider submission.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-duplicate",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:2",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 1800000,
+          "kes": "KES 18,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-duplicate",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-duplicate",
+            "requestId": "request:cmd-spend-duplicate",
+            "categoryId": "couch",
+            "status": "active",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "duplicate.first-callback",
+      "scenario": "duplicate-command-callback",
+      "action": "Apply the first trusted success result.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-duplicate",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        },
+        "allocated": {
+          "minorUnits": 1700000,
+          "kes": "KES 17,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-duplicate",
+            "kind": "payment",
+            "status": "succeeded",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": "ledger:request:request:cmd-spend-duplicate"
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-duplicate",
+            "requestId": "request:cmd-spend-duplicate",
+            "categoryId": "couch",
+            "status": "consumed",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 1
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "duplicate.replayed-callback",
+      "scenario": "duplicate-command-callback",
+      "action": "Ignore the duplicate callback without adding another debit.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-duplicate",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 1800000,
+            "kes": "KES 18,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        },
+        "allocated": {
+          "minorUnits": 1700000,
+          "kes": "KES 17,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 3200000,
+          "kes": "KES 32,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "available": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-duplicate",
+            "kind": "payment",
+            "status": "succeeded",
+            "amount": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "ledgerOperationId": "ledger:request:request:cmd-spend-duplicate"
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-duplicate",
+            "requestId": "request:cmd-spend-duplicate",
+            "categoryId": "couch",
+            "status": "consumed",
+            "total": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 1800000,
+              "kes": "KES 18,000.00"
+            },
+            "globalContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            }
+          }
+        ],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 1
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "stale-approval.previewed",
+      "scenario": "stale-approval",
+      "action": "Preview KES 3,000 global approval against current funds.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": true,
+        "actionStatus": "requiresGlobalApproval",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-stale-approval",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": true,
+        "approvalRequirement": {
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        },
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "stale-approval.funds-changed",
+      "scenario": "stale-approval",
+      "action": "Another operation allocates KES 13,000 after the KES 3,000 preview.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "requiresGlobalApproval",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-stale-approval",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 4800000,
+          "kes": "KES 48,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 200000,
+          "kes": "KES 2,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 200000,
+          "kes": "KES 2,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 2800000,
+            "kes": "KES 28,000.00"
+          },
+          "available": {
+            "minorUnits": 2800000,
+            "kes": "KES 28,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 1,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "stale-approval.rejected",
+      "scenario": "stale-approval",
+      "action": "Recompute current funding and block the now-unfunded payment.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "rejected",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-stale-approval",
+        "commandError": "Category and available global funds do not cover the complete spend.",
+        "commandErrorCode": "insufficientFunds",
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 300000,
+            "kes": "KES 3,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 100000,
+            "kes": "KES 1,000.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 200000,
+            "kes": "KES 2,000.00"
+          },
+          "isFullyFundable": false
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 4800000,
+          "kes": "KES 48,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 200000,
+          "kes": "KES 2,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 200000,
+          "kes": "KES 2,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 2800000,
+            "kes": "KES 28,000.00"
+          },
+          "available": {
+            "minorUnits": 2800000,
+            "kes": "KES 28,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 1,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 1,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    },
+    {
+      "id": "global-only.pending",
+      "scenario": "global-only-hold-blocks-archive",
+      "action": "Hold KES 10,000 globally for a zero-balance category payment.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "submitted",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-empty-category",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": {
+          "advisory": true,
+          "mayBeStale": true,
+          "categoryContribution": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalShortfall": {
+            "minorUnits": 1000000,
+            "kes": "KES 10,000.00"
+          },
+          "unfunded": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "globalAvailable": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "isFullyFundable": true
+        }
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 500000,
+          "kes": "KES 5,000.00"
+        },
+        "reserved": {
+          "minorUnits": 1000000,
+          "kes": "KES 10,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 4000000,
+          "kes": "KES 40,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "empty-category",
+          "name": "Empty category",
+          "kind": "savingsGoal",
+          "archived": false,
+          "target": {
+            "minorUnits": 1000000,
+            "kes": "KES 10,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-empty-category",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-empty-category",
+            "requestId": "request:cmd-spend-empty-category",
+            "categoryId": "empty-category",
+            "status": "active",
+            "total": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            },
+            "globalContribution": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "global-only.archive-blocked",
+      "scenario": "global-only-hold-blocks-archive",
+      "action": "Keep the zero-balance category active while its payment is held.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "rejected",
+        "actionIsLoading": false,
+        "commandId": "cmd-archive-empty-category",
+        "commandError": "A category can be archived only after its balance and holds reach zero.",
+        "commandErrorCode": "insufficientFunds",
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:3",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 500000,
+          "kes": "KES 5,000.00"
+        },
+        "reserved": {
+          "minorUnits": 1000000,
+          "kes": "KES 10,000.00"
+        },
+        "availableTotal": {
+          "minorUnits": 4000000,
+          "kes": "KES 40,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "empty-category",
+          "name": "Empty category",
+          "kind": "savingsGoal",
+          "archived": false,
+          "target": {
+            "minorUnits": 1000000,
+            "kes": "KES 10,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-empty-category",
+            "kind": "payment",
+            "status": "pending",
+            "amount": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-empty-category",
+            "requestId": "request:cmd-spend-empty-category",
+            "categoryId": "empty-category",
+            "status": "active",
+            "total": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            },
+            "globalContribution": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "global-only.hold-released",
+      "scenario": "global-only-hold-blocks-archive",
+      "action": "Release the global hold after confirmed provider failure.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "rejected",
+        "actionIsLoading": false,
+        "commandId": "cmd-archive-empty-category",
+        "commandError": "A category can be archived only after its balance and holds reach zero.",
+        "commandErrorCode": "insufficientFunds",
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:4",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "empty-category",
+          "name": "Empty category",
+          "kind": "savingsGoal",
+          "archived": false,
+          "target": {
+            "minorUnits": 1000000,
+            "kes": "KES 10,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-empty-category",
+            "kind": "payment",
+            "status": "failed",
+            "amount": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-empty-category",
+            "requestId": "request:cmd-spend-empty-category",
+            "categoryId": "empty-category",
+            "status": "released",
+            "total": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            },
+            "globalContribution": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "global-only.archive-allowed",
+      "scenario": "global-only-hold-blocks-archive",
+      "action": "Archive the category after its pending payment has resolved.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "applied",
+        "actionIsLoading": false,
+        "commandId": "cmd-archive-empty-after-hold",
+        "commandError": null,
+        "commandErrorCode": null,
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1:5",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "empty-category",
+          "name": "Empty category",
+          "kind": "savingsGoal",
+          "archived": true,
+          "target": {
+            "minorUnits": 1000000,
+            "kes": "KES 10,000.00"
+          },
+          "balance": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "available": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [
+          {
+            "id": "request:cmd-spend-empty-category",
+            "kind": "payment",
+            "status": "failed",
+            "amount": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "ledgerOperationId": null
+          }
+        ],
+        "reservations": [
+          {
+            "id": "reservation:request:cmd-spend-empty-category",
+            "requestId": "request:cmd-spend-empty-category",
+            "categoryId": "empty-category",
+            "status": "released",
+            "total": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            },
+            "categoryContribution": {
+              "minorUnits": 0,
+              "kes": "KES 0.00"
+            },
+            "globalContribution": {
+              "minorUnits": 1000000,
+              "kes": "KES 10,000.00"
+            }
+          }
+        ],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 1,
+        "referenceProviderSubmissionCount": 1
+      }
+    },
+    {
+      "id": "quote.expired",
+      "scenario": "expired-quote",
+      "action": "Reject the quote at its expiry boundary before provider submission.",
+      "ui": {
+        "loadStatus": "ready",
+        "loadError": null,
+        "watchError": null,
+        "actionableApproval": false,
+        "actionStatus": "rejected",
+        "actionIsLoading": false,
+        "commandId": "cmd-spend-expired",
+        "commandError": "Payment quote has expired.",
+        "commandErrorCode": "expiredQuote",
+        "needsApproval": false,
+        "approvalRequirement": null,
+        "fundingDiagnostic": null
+      },
+      "wallet": {
+        "revision": "fixture-funded-v1",
+        "asOf": "2026-10-11T09:00:00.000Z",
+        "total": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        },
+        "allocated": {
+          "minorUnits": 3500000,
+          "kes": "KES 35,000.00"
+        },
+        "unallocated": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "globalAvailable": {
+          "minorUnits": 1500000,
+          "kes": "KES 15,000.00"
+        },
+        "reserved": {
+          "minorUnits": 0,
+          "kes": "KES 0.00"
+        },
+        "availableTotal": {
+          "minorUnits": 5000000,
+          "kes": "KES 50,000.00"
+        }
+      },
+      "categories": [
+        {
+          "id": "couch",
+          "name": "Couch",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 3000000,
+            "kes": "KES 30,000.00"
+          },
+          "balance": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "available": {
+            "minorUnits": 2000000,
+            "kes": "KES 20,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        },
+        {
+          "id": "rent",
+          "name": "Rent",
+          "kind": "spending",
+          "archived": false,
+          "target": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "balance": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "available": {
+            "minorUnits": 1500000,
+            "kes": "KES 15,000.00"
+          },
+          "reserved": {
+            "minorUnits": 0,
+            "kes": "KES 0.00"
+          }
+        }
+      ],
+      "transactions": {
+        "requests": [],
+        "reservations": [],
+        "ledgerCount": 0,
+        "ledgerCountsByKind": {
+          "deposit": 0,
+          "allocation": 0,
+          "release": 0,
+          "payment": 0
+        },
+        "providerEventCount": 0,
+        "referenceProviderSubmissionCount": 0
+      }
+    }
+  ]
+}

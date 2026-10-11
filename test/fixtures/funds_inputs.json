@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "actor": {
+    "ownerId": "owner-1",
+    "walletId": "wallet-1"
+  },
+  "clock": {
+    "nowUtc": "2026-10-11T09:00:00.000Z",
+    "defaultQuoteTtlSeconds": 300,
+    "expiredQuoteTtlSeconds": 60
+  },
+  "walletRevisions": {
+    "empty": "fixture-empty-v1",
+    "funded": "fixture-funded-v1"
+  },
+  "categories": {
+    "couch": {
+      "id": "couch",
+      "name": "Couch",
+      "kind": "spending",
+      "targetKes": 30000
+    },
+    "rent": {
+      "id": "rent",
+      "name": "Rent",
+      "kind": "spending",
+      "targetKes": 15000
+    },
+    "emergency": {
+      "id": "emergency",
+      "name": "Emergency",
+      "kind": "savingsGoal",
+      "targetKes": 10000
+    },
+    "emptyPayment": {
+      "id": "empty-category",
+      "name": "Empty category",
+      "kind": "savingsGoal",
+      "targetKes": 10000
+    }
+  },
+  "seeds": {
+    "empty": {
+      "unallocatedKes": 0,
+      "globalReservedKes": 0,
+      "categories": []
+    },
+    "funded": {
+      "unallocatedKes": 15000,
+      "globalReservedKes": 0,
+      "categories": [
+        {
+          "category": "couch",
+          "balanceKes": 20000,
+          "reservedKes": 0
+        },
+        {
+          "category": "rent",
+          "balanceKes": 15000,
+          "reservedKes": 0
+        }
+      ]
+    }
+  },
+  "amountsKes": {
+    "deposit": 50000,
+    "emergencyTarget": 10000,
+    "emergencyEditedTarget": 12000,
+    "couchAllocation": 5000,
+    "couchRelease": 3000,
+    "rentAllocationForStaleApproval": 13000,
+    "couch18": 18000,
+    "couch20": 20000,
+    "couch23": 23000,
+    "couch36": 36000,
+    "emptyCategorySpend": 10000
+  },
+  "categoryEdits": {
+    "emergencyName": "Emergency fund"
+  },
+  "recipient": {
+    "kind": "till",
+    "tillNumber": "001234"
+  },
+  "payerPhone": "254712345678",
+  "quotes": {
+    "depositSuccess": {
+      "id": "quote-deposit-50000",
+      "amount": "deposit",
+      "ttl": "default"
+    },
+    "depositFailure": {
+      "id": "quote-deposit-failure",
+      "amount": "deposit",
+      "ttl": "default"
+    },
+    "couch18": {
+      "id": "quote-couch-18000",
+      "category": "couch",
+      "amount": "couch18",
+      "ttl": "default"
+    },
+    "couch20": {
+      "id": "quote-couch-20000",
+      "category": "couch",
+      "amount": "couch20",
+      "ttl": "default"
+    },
+    "couch23": {
+      "id": "quote-couch-23000",
+      "category": "couch",
+      "amount": "couch23",
+      "approvedGlobalKes": 3000,
+      "ttl": "default"
+    },
+    "couch36": {
+      "id": "quote-couch-36000",
+      "category": "couch",
+      "amount": "couch36",
+      "ttl": "default"
+    },
+    "couchFailure23": {
+      "id": "quote-couch-failed",
+      "category": "couch",
+      "amount": "couch23",
+      "approvedGlobalKes": 3000,
+      "ttl": "default"
+    },
+    "couchUnknown23": {
+      "id": "quote-couch-unknown",
+      "category": "couch",
+      "amount": "couch23",
+      "approvedGlobalKes": 3000,
+      "ttl": "default"
+    },
+    "couchDuplicate18": {
+      "id": "quote-couch-duplicate",
+      "category": "couch",
+      "amount": "couch18",
+      "ttl": "default"
+    },
+    "couchStale23": {
+      "id": "quote-couch-stale",
+      "category": "couch",
+      "amount": "couch23",
+      "approvedGlobalKes": 3000,
+      "ttl": "default"
+    },
+    "emptyCategory10": {
+      "id": "quote-global-only-10000",
+      "category": "emptyPayment",
+      "amount": "emptyCategorySpend",
+      "approvedGlobalKes": 10000,
+      "ttl": "default"
+    },
+    "couchExpired18": {
+      "id": "quote-expired",
+      "category": "couch",
+      "amount": "couch18",
+      "ttl": "expired"
+    },
+    "gatewayRejected18": {
+      "id": "quote-gateway-rejected",
+      "category": "couch",
+      "amount": "couch18",
+      "ttl": "default"
+    },
+    "gatewayUnknown18": {
+      "id": "quote-gateway-unknown",
+      "category": "couch",
+      "amount": "couch18",
+      "ttl": "default"
+    }
+  },
+  "commands": {
+    "categoryCreate": "cmd-create-emergency",
+    "categoryEdit": "cmd-edit-emergency",
+    "categoryArchive": "cmd-archive-emergency",
+    "allocateCouch": "cmd-allocate-couch",
+    "allocateRentForStaleApproval": "cmd-allocate-rent-for-stale-approval",
+    "releaseCouch": "cmd-release-couch",
+    "depositSuccess": "cmd-deposit-50000",
+    "depositFailure": "cmd-deposit-failure",
+    "couch18": "cmd-spend-couch-18000",
+    "couch20": "cmd-spend-couch-20000",
+    "couch23": "cmd-spend-couch-23000",
+    "couch36": "cmd-spend-couch-36000",
+    "couchFailure": "cmd-spend-confirmed-failure",
+    "couchUnknown": "cmd-spend-unknown",
+    "couchDuplicate": "cmd-spend-duplicate",
+    "couchStale": "cmd-spend-stale-approval",
+    "emptyCategoryCreate": "cmd-create-empty-category",
+    "emptyCategorySpend": "cmd-spend-empty-category",
+    "emptyCategoryArchive": "cmd-archive-empty-category",
+    "emptyCategoryArchiveAfterHold": "cmd-archive-empty-after-hold",
+    "gatewayRejected": "cmd-gateway-rejected",
+    "gatewayUnknown": "cmd-gateway-unknown",
+    "expiredSpend": "cmd-spend-expired"
+  },
+  "events": {
+    "depositSuccess": "event-deposit-success",
+    "depositFailure": "event-deposit-failure",
+    "couch18Success": "event-spend18-success",
+    "couch23Success": "event-spend23-success",
+    "couchFailure": "event-spend-confirmed-failure",
+    "couchUnknown": "event-spend-unknown",
+    "couch20Success": "event-spend20-success",
+    "couchDuplicateSuccess": "event-spend-duplicate",
+    "emptyCategoryFailure": "event-global-only-failure"
+  },
+  "providerResult": {
+    "merchantRequestIdPrefix": "merchant-request:",
+    "checkoutRequestIdPrefix": "checkout-request:",
+    "conversationIdPrefix": "conversation:",
+    "receiptPrefix": "receipt-",
+    "successDescription": "Reference provider confirmed success",
+    "failureDescription": "Reference provider confirmed failure",
+    "unknownDescription": "Reference provider result is unknown"
+  },
+  "gatewayProfiles": {
+    "accepted": {
+      "status": "accepted",
+      "identifiers": {
+        "merchantRequestIdPrefix": "merchant-request:",
+        "checkoutRequestIdPrefix": "checkout-request:"
+      },
+      "description": "Accepted by reference provider"
+    },
+    "rejected": {
+      "status": "rejected",
+      "identifiers": {
+        "merchantRequestIdPrefix": "merchant-request:",
+        "checkoutRequestIdPrefix": "checkout-request:"
+      },
+      "description": "Rejected by reference provider"
+    },
+    "unknown": {
+      "status": "unknown",
+      "identifiers": {
+        "conversationIdPrefix": "conversation:"
+      },
+      "description": "Reference provider result is unknown"
+    }
+  }
+}

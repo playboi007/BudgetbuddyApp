@@ -1,0 +1,54 @@
+{
+  "time": {
+    "nowUtc": "2026-10-11T09:00:00Z",
+    "quoteLifetimeSeconds": 300,
+    "settlementDelaySeconds": 30
+  },
+  "identity": {
+    "walletId": "wallet-1",
+    "ownerId": "owner-1"
+  },
+  "wallet": {
+    "revision": "r1",
+    "globalKes": 15000,
+    "globalReservedKes": 0,
+    "categoryBalanceKes": 20000,
+    "categoryReservedKes": 0
+  },
+  "category": {
+    "id": "couch",
+    "name": "Couch",
+    "kind": "spending",
+    "targetKes": 30000
+  },
+  "payment": {
+    "quoteId": "quote-1",
+    "categoryId": "couch",
+    "amountKes": 15000,
+    "tillNumber": "001234",
+    "categoryContributionKes": 10000,
+    "globalContributionKes": 5000
+  },
+  "deposit": {
+    "quoteId": "deposit-quote-1",
+    "requestId": "request-1",
+    "idempotencyKey": "deposit-1",
+    "amountKes": 5000,
+    "payerPhone": "254712345678",
+    "pendingDescription": "Waiting for provider",
+    "successDescription": "Deposit confirmed"
+  },
+  "provider": {
+    "merchantRequestId": "merchant-1",
+    "transactionReceipt": "receipt-1",
+    "settledLedgerId": "ledger-1",
+    "settledLedgerDescription": "Confirmed M-Pesa deposit"
+  },
+  "references": {
+    "reservationId": "reservation-1",
+    "paymentRequestId": "payment-request-1",
+    "createCommandId": "create-1",
+    "spendCommandId": "spend-1",
+    "nextCreateCommandId": "create-2"
+  }
+}
